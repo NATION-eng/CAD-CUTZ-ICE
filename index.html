@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#c5a059" />
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="CAD CUTZ & ICE - Premium Grooming & Elite Barbering Management">
+
+    <link rel="manifest" href="/manifest.json" />
+    
+    <title>CAD CUTZ & ICE</title>
+
+    <script>
+      // 3. SERVICE WORKER REGISTRATION
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          // CORRECTION: Added leading slash to ensure sw.js is found in the public root
+          navigator.serviceWorker.register('/sw.js')
+            .then(reg => console.log('PWA Service Worker Registered!'))
+            .catch(err => console.log('Service Worker Failed:', err));
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

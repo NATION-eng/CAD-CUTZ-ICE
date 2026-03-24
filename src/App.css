@@ -1,0 +1,141 @@
+/* 1. IMPORTS & FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+/* 2. THE ENGINE: DYNAMIC VARIABLES */
+:root {
+  /* Colors */
+  --bg-dark: #050505;
+  --gold: #c5a059;
+  --gold-muted: rgba(197, 160, 89, 0.15);
+  --text-white: #ffffff;
+  --text-gray: #a0a0a0;
+  --border-gold: 1px solid rgba(197, 160, 89, 0.3);
+
+  /* Fluid Typography: Scales between a min and max size automatically */
+  --fs-h1: clamp(2.5rem, 10vw, 5rem);
+  --fs-h2: clamp(1.8rem, 6vw, 3rem);
+  --fs-h3: clamp(1.2rem, 3vw, 1.8rem);
+  --fs-body: clamp(0.9rem, 1.2vw, 1.1rem);
+  --fs-small: clamp(0.7rem, 0.9vw, 0.85rem);
+
+  /* Fluid Spacing: Margin/Padding that adapts to screen width */
+  --space-unit: clamp(1rem, 4vw, 4rem);
+  --container-max: 1400px;
+}
+
+/* 3. GLOBAL RESET & PROTECTION */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+html, body {
+  background-color: var(--bg-dark);
+  color: var(--text-white);
+  font-family: 'Montserrat', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden; /* Critical: Prevents horizontal scrolling bugs on mobile */
+  width: 100%;
+}
+
+/* 4. RESPONSIVE TYPOGRAPHY */
+h1, h2, .serif {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--gold);
+}
+
+h1 { font-size: var(--fs-h1); margin-bottom: 0.5em; }
+h2 { font-size: var(--fs-h2); margin-bottom: 0.5em; }
+h3 { font-size: var(--fs-h3); color: var(--text-white); }
+p { font-size: var(--fs-body); color: var(--text-gray); }
+
+/* 5. THE ALL-DEVICE SHELL */
+.app-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--space-unit);
+}
+
+/* Universal Grid System: 
+   This automatically calculates how many items fit without media queries! */
+.responsive-grid {
+  display: grid;
+  gap: var(--space-unit);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+
+/* 6. FLEXIBLE COMPONENTS */
+.card {
+  background: linear-gradient(145deg, #0a0a0a, #111);
+  border: var(--border-gold);
+  padding: calc(var(--space-unit) / 1.5);
+  border-radius: 8px;
+  height: 100%;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: var(--gold);
+  transform: translateY(-5px);
+}
+
+/* Responsive Image Handling */
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* 7. DEVICE-SPECIFIC OVERRIDES (THE POLISH) */
+
+/* Large Screens (Desktops/4K) */
+@media (min-width: 1600px) {
+  :root { --container-max: 1800px; }
+}
+
+/* Tablets (iPad/Foldables) */
+@media (max-width: 1024px) {
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 768px) {
+  :root {
+    --space-unit: 1.2rem; /* Tighter padding for mobile */
+  }
+  
+  .app-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Make buttons easier to tap with thumbs */
+  button, .btn {
+    width: 100%; 
+    min-height: 50px;
+    font-size: 1rem;
+  }
+}
+
+/* Landscape Mode (Small phones rotated) */
+@media (max-height: 500px) and (orientation: landscape) {
+  h1 { font-size: 2rem; }
+  .app-container { padding-top: 1rem; }
+}
+
+/* Accessibility: Safe areas for iPhone notches */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
