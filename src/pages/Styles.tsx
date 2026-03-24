@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import SafeImage from "../components/SafeImage";
 
 const stylesList = [
   {
@@ -166,7 +167,7 @@ const Styles: React.FC = () => {
             onClick={() => handleStyleSelect(style.name)}
           >
             <div className="style-image-wrapper">
-              <img src={style.img} alt={style.name} className="style-img" />
+              <SafeImage src={style.img} alt={style.name} className="style-img" />
               <div className="style-card-overlay">
                 <span className="book-text">SELECT STYLE</span>
               </div>

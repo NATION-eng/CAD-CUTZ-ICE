@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050505" />
+      <stop offset="50%" stop-color="#151515" />
+      <stop offset="100%" stop-color="#0b0b0b" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)" />
+  <circle cx="1050" cy="140" r="190" fill="#c5a059" fill-opacity="0.08" />
+  <circle cx="180" cy="760" r="220" fill="#c5a059" fill-opacity="0.06" />
+  <rect x="100" y="120" width="170" height="8" rx="4" fill="#c5a059" />
+  <text x="100" y="220" fill="#ffffff" font-family="Georgia, serif" font-size="72" font-weight="700">CAD CUTZ &amp; ICE</text>
+  <text x="100" y="290" fill="#c5a059" font-family="Arial, sans-serif" font-size="30" letter-spacing="6">IMAGE UNAVAILABLE</text>
+  <text x="100" y="760" fill="#8d8d8d" font-family="Arial, sans-serif" font-size="28">Fallback image loaded successfully</text>
+</svg>

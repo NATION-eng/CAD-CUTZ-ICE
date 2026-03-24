@@ -1,6 +1,7 @@
 import React from "react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import "./Gallery.css";
+import SafeImage from "./SafeImage";
 
 const GallerySection: React.FC = () => {
   const { ref, isVisible } = useScrollReveal(0.1);
@@ -73,7 +74,7 @@ const GallerySection: React.FC = () => {
                   className="magic-media"
                 />
               ) : (
-                <img
+                <SafeImage
                   src={item.url}
                   alt="Magic Moment"
                   className="magic-media"
