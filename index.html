@@ -20,9 +20,9 @@
       // 3. SERVICE WORKER REGISTRATION
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // CORRECTION: Added leading slash to ensure sw.js is found in the public root
           navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('PWA Service Worker Registered!'))
+            .then((reg) => reg.update())
+            .then(() => console.log('PWA Service Worker Registered!'))
             .catch(err => console.log('Service Worker Failed:', err));
         });
       }
