@@ -1,7 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import ReliableImage from "../components/ReliableImage";
-import { buildImageSources } from "../utils/imageFallbacks";
 
 const stylesList = [
   {
@@ -168,11 +166,7 @@ const Styles: React.FC = () => {
             onClick={() => handleStyleSelect(style.name)}
           >
             <div className="style-image-wrapper">
-              <ReliableImage
-                sources={buildImageSources(style.img, style.name)}
-                alt={style.name}
-                className="style-img"
-              />
+              <img src={style.img} alt={style.name} className="style-img" />
               <div className="style-card-overlay">
                 <span className="book-text">SELECT STYLE</span>
               </div>
