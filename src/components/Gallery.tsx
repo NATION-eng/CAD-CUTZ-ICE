@@ -1,6 +1,8 @@
 import React from "react";
 import { useScrollReveal } from "../hooks/useScrollReveal";
 import "./Gallery.css";
+import ReliableImage from "./ReliableImage";
+import { buildImageSources } from "../utils/imageFallbacks";
 
 const GallerySection: React.FC = () => {
   const { ref, isVisible } = useScrollReveal(0.1);
@@ -73,8 +75,8 @@ const GallerySection: React.FC = () => {
                   className="magic-media"
                 />
               ) : (
-                <img
-                  src={item.url}
+                <ReliableImage
+                  sources={buildImageSources(item.url, `Magic Moment ${item.id}`)}
                   alt="Magic Moment"
                   className="magic-media"
                 />
