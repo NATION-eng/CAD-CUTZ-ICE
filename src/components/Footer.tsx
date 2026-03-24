@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
     <footer
@@ -28,8 +30,8 @@ export default function Footer() {
         </p>
 
         {/* The Secret Door for Staff */}
-        <a
-          href="/admin"
+        <Link
+          to="/admin"
           style={{
             fontSize: "0.7rem",
             color: "#888" /* Lightened from #444 for better visibility */,
@@ -44,7 +46,7 @@ export default function Footer() {
           onMouseOut={(e) => (e.currentTarget.style.color = "#888")}
         >
           Staff Portal
-        </a>
+        </Link>
       </div>
 
       <style>{`
