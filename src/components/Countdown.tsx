@@ -6,7 +6,6 @@ interface CountdownProps {
 }
 
 const Countdown: React.FC<CountdownProps> = ({ targetDate, barberName }) => {
-  // 1. Calculate the actual seconds remaining until the target date
   const calculateSecondsLeft = () => {
     const target = new Date(targetDate).getTime();
     const now = new Date().getTime();
@@ -27,14 +26,13 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate, barberName }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate]); // Re-run if targetDate changes
+  }, [targetDate]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);
     const mins = Math.floor((totalSeconds % 3600) / 60);
     const secs = totalSeconds % 60;
 
-    // Show hours only if there is more than 60 mins left
     const hoursPart = hours > 0 ? `${hours}:` : "";
     return `${hoursPart}${mins.toString().padStart(2, "0")}:${secs
       .toString()
@@ -45,14 +43,15 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate, barberName }) => {
     <div
       style={{
         border: "1px solid rgba(197, 160, 89, 0.3)",
-        padding: "2.5rem",
+        padding: "clamp(1.2rem, 3.5vw, 2rem)",
         background: "#0c0c0c",
         textAlign: "center",
         position: "relative",
         overflow: "hidden",
         width: "100%",
-        maxWidth: "400px",
+        maxWidth: "380px",
         margin: "0 auto",
+        borderRadius: "8px",
       }}
     >
       <div
@@ -60,31 +59,45 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate, barberName }) => {
           position: "absolute",
           top: 0,
           left: 0,
-          width: "10px",
-          height: "10px",
+          width: "8px",
+          height: "8px",
           borderTop: "2px solid #c5a059",
           borderLeft: "2px solid #c5a059",
         }}
-      ></div>
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: "8px",
+          height: "8px",
+          borderTop: "2px solid #c5a059",
+          borderRight: "2px solid #c5a059",
+        }}
+      />
 
       <span
         style={{
           color: "#c5a059",
-          letterSpacing: "3px",
-          fontSize: "0.7rem",
+          letterSpacing: "2.5px",
+          fontSize: "clamp(0.62rem, 1.5vw, 0.72rem)",
           fontWeight: "bold",
+          display: "block",
+          textTransform: "uppercase",
         }}
       >
-        SESSION: {barberName.toUpperCase()}
+        SESSION: {barberName}
       </span>
 
       <div
         className="serif"
         style={{
-          fontSize: "4.5rem",
+          fontSize: "clamp(2.4rem, 8vw, 3.8rem)",
           color: "#c5a059",
-          margin: "1rem 0",
-          lineHeight: "1",
+          margin: "0.6rem 0",
+          lineHeight: "1.05",
+          letterSpacing: "1px",
         }}
       >
         {formatTime(seconds)}
@@ -92,10 +105,11 @@ const Countdown: React.FC<CountdownProps> = ({ targetDate, barberName }) => {
 
       <p
         style={{
-          color: "#666",
-          fontSize: "0.75rem",
+          color: "#777",
+          fontSize: "clamp(0.65rem, 1.4vw, 0.75rem)",
           letterSpacing: "1px",
           textTransform: "uppercase",
+          margin: 0,
         }}
       >
         {seconds > 0 ? "Estimated Time Remaining" : "Your session has started"}

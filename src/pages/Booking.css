@@ -1,0 +1,378 @@
+/* src/pages/Booking.css */
+
+.booking-page-root {
+  min-height: 100vh;
+  background: var(--bg-black, #050505);
+  padding: clamp(90px, 12vw, 130px) 4% clamp(40px, 6vw, 80px);
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.booking-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.15);
+  padding-bottom: 1.5rem;
+}
+
+.booking-header-title h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5.5vw, 3.5rem);
+  line-height: 1.15;
+}
+
+.booking-retrieve-btn {
+  padding: 10px 18px;
+  font-size: 0.72rem;
+  letter-spacing: 1.2px;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* --- STEP PROGRESS NAVIGATION --- */
+.booking-steps-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 2.5rem;
+}
+
+.booking-step-tab {
+  background: #0d0d0d;
+  border-bottom: 3px solid #222;
+  padding: 12px 14px;
+  transition: all 0.3s ease;
+  border-radius: 4px 4px 0 0;
+  user-select: none;
+}
+
+.booking-step-tab.active {
+  background: rgba(197, 160, 89, 0.1);
+  border-bottom-color: var(--gold, #c5a059);
+}
+
+.booking-step-tab.completed {
+  background: rgba(34, 197, 94, 0.06);
+  border-bottom-color: #22c55e;
+  cursor: pointer;
+}
+
+.booking-step-number {
+  font-size: 0.65rem;
+  color: #555;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.booking-step-tab.active .booking-step-number {
+  color: var(--gold, #c5a059);
+}
+
+.booking-step-tab.completed .booking-step-number {
+  color: #22c55e;
+}
+
+.booking-step-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #777;
+  margin-top: 2px;
+}
+
+.booking-step-tab.active .booking-step-label {
+  color: #fff;
+}
+
+.booking-step-tab.completed .booking-step-label {
+  color: #ddd;
+}
+
+/* --- MAIN 2-COLUMN BOOKING LAYOUT --- */
+.booking-layout-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 3rem;
+  align-items: start;
+}
+
+.booking-content-column {
+  min-width: 0;
+}
+
+/* --- SERVICE CATALOG --- */
+.booking-category-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 1.2rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.booking-category-pill {
+  background: #111;
+  color: #aaa;
+  border: 1px solid #222;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.booking-category-pill.active {
+  background: var(--gold-gradient);
+  color: #000;
+  border: none;
+}
+
+.booking-services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+  max-height: 520px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.booking-service-card {
+  background: #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.booking-service-card:hover {
+  border-color: rgba(197, 160, 89, 0.5);
+  background: #111;
+}
+
+.booking-service-card.selected {
+  background: rgba(197, 160, 89, 0.1);
+  border: 1.5px solid var(--gold, #c5a059);
+}
+
+/* --- ARTISAN SELECTION --- */
+.booking-artisans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.booking-artisan-card {
+  background: #0c0c0c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.booking-artisan-card:hover {
+  border-color: rgba(197, 160, 89, 0.5);
+  background: #111;
+}
+
+.booking-artisan-card.selected {
+  background: rgba(197, 160, 89, 0.12);
+  border: 1.5px solid var(--gold, #c5a059);
+}
+
+/* --- DATE & TIME SLOTS --- */
+.booking-time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.booking-time-slot-btn {
+  background: #0c0c0c;
+  color: #fff;
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  padding: 10px 4px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+  font-family: inherit;
+}
+
+.booking-time-slot-btn:hover:not(:disabled) {
+  border-color: var(--gold, #c5a059);
+  background: rgba(197, 160, 89, 0.1);
+}
+
+.booking-time-slot-btn.selected {
+  background: var(--gold-gradient);
+  color: #000;
+  border: none;
+  font-weight: 800;
+}
+
+.booking-time-slot-btn:disabled {
+  background: rgba(255, 255, 255, 0.02);
+  color: #444;
+  border-color: #1a1a1a;
+  cursor: not-allowed;
+}
+
+/* --- SUMMARY RECEIPT CARD --- */
+.booking-summary-card {
+  background: #0c0c0c;
+  border: 1px solid rgba(197, 160, 89, 0.25);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+  position: sticky;
+  top: 90px;
+}
+
+/* --- ACTION NAVIGATION BUTTONS --- */
+.booking-nav-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.booking-nav-actions .btn-gold,
+.booking-nav-actions .btn-outline {
+  min-height: 46px;
+}
+
+/* --- VIP BOARDING PASS CONTAINER --- */
+.vip-pass-wrapper {
+  max-width: 540px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.vip-pass-card {
+  background: #0c0c0c;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.vip-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ===================================================
+   RESPONSIVE MEDIA QUERIES (TABLETS, PHONES, SMALL VIEWPORTS)
+   =================================================== */
+
+@media (max-width: 1024px) {
+  .booking-layout-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .booking-summary-card {
+    position: static;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .booking-page-root {
+    padding: 85px 4% 50px;
+  }
+
+  .booking-steps-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-bottom: 1.8rem;
+  }
+
+  .booking-step-tab {
+    padding: 8px 10px;
+  }
+
+  .booking-step-number {
+    font-size: 0.6rem;
+  }
+
+  .booking-step-label {
+    font-size: 0.75rem;
+  }
+
+  .booking-services-grid {
+    grid-template-columns: 1fr;
+    max-height: 440px;
+  }
+
+  .booking-artisans-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-time-slots-grid {
+    grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+    gap: 6px;
+  }
+
+  .booking-retrieve-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .booking-nav-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .booking-nav-actions button,
+  .booking-nav-actions a {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-page-root {
+    padding: 80px 3.5% 40px;
+  }
+
+  .vip-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .booking-header {
+    margin-bottom: 1.2rem;
+    padding-bottom: 1rem;
+  }
+
+  .booking-time-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .booking-time-slot-btn {
+    padding: 8px 2px;
+    font-size: 0.7rem;
+  }
+}

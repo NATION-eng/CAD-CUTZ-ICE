@@ -19,6 +19,7 @@ import { soundEffects } from "../utils/soundEffects";
 import { SERVICES_CATALOG, ARTISANS, SALON_HOURS } from "../data/salonData";
 import { LuxuryIcon } from "../components/LuxuryIcon";
 import type { ServiceItem, Booking as BookingType } from "../types";
+import "./Booking.css";
 
 const CATEGORIES = [
   "All",
@@ -388,13 +389,13 @@ const Booking: React.FC = () => {
     const isInChair = bookingDetails.status === "in-chair";
 
     return (
-      <div className="page-wrapper">
-        <div style={{ maxWidth: "560px", margin: "0 auto", width: "100%" }}>
-          <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+      <div className="booking-page-root">
+        <div className="vip-pass-wrapper">
+          <div style={{ textAlign: "center", marginBottom: "1.8rem" }}>
             <span className="eyebrow">
               {isInChair ? "ATELIER SESSION IN PROGRESS" : "OFFICIAL VIP BOARDING PASS"}
             </span>
-            <h2 className="serif" style={{ fontSize: "clamp(2rem, 5vw, 2.6rem)", marginTop: "0.2rem" }}>
+            <h2 className="serif" style={{ fontSize: "clamp(1.8rem, 5vw, 2.4rem)", marginTop: "0.2rem" }}>
               {isInChair ? "You Are " : "Seat "}
               <span className="gold-text italic">{isInChair ? "In The Chair" : "Reserved"}</span>
             </h2>
@@ -402,17 +403,14 @@ const Booking: React.FC = () => {
 
           {/* LUXURY VIP PASS CARD */}
           <div
+            className="vip-pass-card"
             style={{
-              background: "#0c0c0c",
               border: isInChair
                 ? "1px solid #22c55e"
                 : "1px solid rgba(197, 160, 89, 0.35)",
-              borderRadius: "16px",
               boxShadow: isInChair
                 ? "0 20px 50px rgba(34, 197, 94, 0.15), 0 0 30px rgba(0,0,0,0.9)"
                 : "0 25px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(197, 160, 89, 0.15)",
-              position: "relative",
-              overflow: "hidden",
             }}
           >
             {/* Top Pass Status Header */}
@@ -424,7 +422,7 @@ const Booking: React.FC = () => {
                 color: isInChair ? "#ffffff" : "#050505",
                 padding: "12px 16px",
                 textAlign: "center",
-                fontSize: "0.75rem",
+                fontSize: "0.72rem",
                 fontWeight: 800,
                 letterSpacing: "1.5px",
                 textTransform: "uppercase",
@@ -435,7 +433,7 @@ const Booking: React.FC = () => {
                 gap: "6px",
               }}
             >
-              <LuxuryIcon name={isInChair ? "sparkle" : "crown"} size={16} color={isInChair ? "#fff" : "#050505"} />
+              <LuxuryIcon name={isInChair ? "sparkle" : "crown"} size={15} color={isInChair ? "#fff" : "#050505"} />
               <span>{isInChair ? "ARTISAN ACTIVE SESSION" : "CONFIRMED RESERVATION"}</span>
               <span style={{ fontSize: "0.65rem", opacity: 0.85 }}>
                 • REF #{bookingDetails.id.substring(0, 6).toUpperCase()}
@@ -443,7 +441,7 @@ const Booking: React.FC = () => {
             </div>
 
             {/* Countdown Clock Module */}
-            <div style={{ padding: "clamp(18px, 4vw, 28px) 16px 16px", textAlign: "center" }}>
+            <div style={{ padding: "clamp(16px, 3.5vw, 24px) 14px 14px", textAlign: "center" }}>
               <Countdown
                 targetDate={`${bookingDetails.date}T${bookingDetails.time}:00`}
                 barberName={bookingDetails.artisan}
@@ -454,7 +452,7 @@ const Booking: React.FC = () => {
             <div
               style={{
                 position: "relative",
-                height: "30px",
+                height: "26px",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -463,9 +461,9 @@ const Booking: React.FC = () => {
               <div
                 style={{
                   position: "absolute",
-                  left: "-16px",
-                  width: "32px",
-                  height: "32px",
+                  left: "-13px",
+                  width: "26px",
+                  height: "26px",
                   borderRadius: "50%",
                   background: "#050505",
                   border: isInChair
@@ -475,7 +473,7 @@ const Booking: React.FC = () => {
               />
               <div
                 style={{
-                  width: "82%",
+                  width: "84%",
                   borderTop: isInChair
                     ? "2px dashed rgba(34, 197, 94, 0.4)"
                     : "2px dashed rgba(197, 160, 89, 0.35)",
@@ -484,9 +482,9 @@ const Booking: React.FC = () => {
               <div
                 style={{
                   position: "absolute",
-                  right: "-16px",
-                  width: "32px",
-                  height: "32px",
+                  right: "-13px",
+                  width: "26px",
+                  height: "26px",
                   borderRadius: "50%",
                   background: "#050505",
                   border: isInChair
@@ -497,31 +495,31 @@ const Booking: React.FC = () => {
             </div>
 
             {/* Ticket Details Grid */}
-            <div style={{ padding: "16px clamp(16px, 4vw, 32px) 28px" }}>
-              <div className="ticket-details-grid">
+            <div style={{ padding: "14px clamp(14px, 3.5vw, 28px) 24px" }}>
+              <div className="vip-details-grid">
                 <div>
                   <span style={{ fontSize: "0.68rem", color: "#777", letterSpacing: "1.5px", textTransform: "uppercase" }}>CLIENT</span>
-                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginTop: "3px" }}>{bookingDetails.customerName}</div>
+                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", marginTop: "2px" }}>{bookingDetails.customerName}</div>
                 </div>
                 <div>
                   <span style={{ fontSize: "0.68rem", color: "#777", letterSpacing: "1.5px", textTransform: "uppercase" }}>MASTER ARTISAN</span>
-                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "#c5a059", marginTop: "3px" }}>{bookingDetails.artisan}</div>
+                  <div style={{ fontSize: "1rem", fontWeight: 700, color: "#c5a059", marginTop: "2px" }}>{bookingDetails.artisan}</div>
                 </div>
                 <div>
                   <span style={{ fontSize: "0.68rem", color: "#777", letterSpacing: "1.5px", textTransform: "uppercase" }}>APPOINTMENT DATE</span>
-                  <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "#ddd", marginTop: "3px" }}>{bookingDetails.date} at {bookingDetails.time}</div>
+                  <div style={{ fontSize: "0.9rem", fontWeight: 600, color: "#ddd", marginTop: "2px" }}>{bookingDetails.date} at {bookingDetails.time}</div>
                 </div>
                 <div>
                   <span style={{ fontSize: "0.68rem", color: "#777", letterSpacing: "1.5px", textTransform: "uppercase" }}>TOTAL VALUE</span>
-                  <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#22c55e", marginTop: "3px" }}>
+                  <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#22c55e", marginTop: "2px" }}>
                     {bookingDetails.price > 0 ? `₦${bookingDetails.price.toLocaleString()}` : "Complimentary"}
                   </div>
                 </div>
               </div>
 
-              <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "1.2rem", marginBottom: "1.8rem" }}>
+              <div style={{ borderTop: "1px solid rgba(255, 255, 255, 0.08)", paddingTop: "1rem", marginBottom: "1.5rem" }}>
                 <span style={{ fontSize: "0.68rem", color: "#777", letterSpacing: "1.5px", textTransform: "uppercase" }}>SERVICE SELECTION</span>
-                <div style={{ fontSize: "0.92rem", color: "#eee", marginTop: "4px", lineHeight: 1.5 }}>{bookingDetails.service}</div>
+                <div style={{ fontSize: "0.9rem", color: "#eee", marginTop: "4px", lineHeight: 1.5 }}>{bookingDetails.service}</div>
               </div>
 
               {/* Action Buttons: Add to Calendar & Concierge */}
@@ -531,7 +529,7 @@ const Booking: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn-outline"
-                  style={{ width: "100%", padding: "12px", fontSize: "0.75rem", letterSpacing: "1.5px", gap: "8px" }}
+                  style={{ width: "100%", padding: "12px", fontSize: "0.75rem", letterSpacing: "1.2px", gap: "8px" }}
                   onClick={() => soundEffects.playSoftClick()}
                 >
                   <LuxuryIcon name="calendar" size={16} color="#c5a059" />
@@ -555,7 +553,7 @@ const Booking: React.FC = () => {
                     textDecoration: "none",
                     fontWeight: 700,
                     fontSize: "0.75rem",
-                    letterSpacing: "1.5px",
+                    letterSpacing: "1.2px",
                     transition: "all 0.2s ease",
                   }}
                   onClick={() => soundEffects.playSoftClick()}
@@ -569,7 +567,7 @@ const Booking: React.FC = () => {
                     type="button"
                     onClick={handleCancelBooking}
                     style={{
-                      marginTop: "10px",
+                      marginTop: "8px",
                       background: "transparent",
                       color: "#ef4444",
                       border: "1px solid rgba(239, 68, 68, 0.3)",
@@ -578,7 +576,7 @@ const Booking: React.FC = () => {
                       cursor: "pointer",
                       fontWeight: 700,
                       fontSize: "0.72rem",
-                      letterSpacing: "2px",
+                      letterSpacing: "1.5px",
                       transition: "all 0.2s ease",
                     }}
                     onMouseOver={(e) => (e.currentTarget.style.background = "rgba(239, 68, 68, 0.1)")}
@@ -597,24 +595,13 @@ const Booking: React.FC = () => {
 
   // --- VIEW 2: MULTI-STEP BOOKING WIZARD ---
   return (
-    <div className="page-wrapper">
+    <div className="booking-page-root">
       <div className="container">
         {/* Header with Title & Lookup Trigger */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-end",
-            flexWrap: "wrap",
-            gap: "1.2rem",
-            marginBottom: "2.5rem",
-            borderBottom: "1px solid rgba(197, 160, 89, 0.15)",
-            paddingBottom: "1.5rem",
-          }}
-        >
-          <div>
+        <div className="booking-header">
+          <div className="booking-header-title">
             <span className="eyebrow">RESERVE YOUR APPOINTMENT</span>
-            <h1 className="serif" style={{ margin: 0 }}>
+            <h1 className="serif">
               The <span className="gold-text italic">Atelier Session</span>
             </h1>
           </div>
@@ -622,8 +609,7 @@ const Booking: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowLookupModal(true)}
-            className="btn-outline"
-            style={{ padding: "10px 18px", fontSize: "0.72rem", letterSpacing: "1.2px", gap: "8px" }}
+            className="btn-outline booking-retrieve-btn"
           >
             <LuxuryIcon name="search" size={14} color="#c5a059" />
             RETRIEVE MY ACTIVE PASS
@@ -631,7 +617,7 @@ const Booking: React.FC = () => {
         </div>
 
         {/* Wizard Progress Steps Indicator */}
-        <div className="booking-steps-nav">
+        <div className="booking-steps-container">
           {[
             { num: 1, label: "Services" },
             { num: 2, label: "Artisan" },
@@ -643,58 +629,33 @@ const Booking: React.FC = () => {
               onClick={() => {
                 if (s.num < currentStep) setCurrentStep(s.num);
               }}
-              style={{
-                background: currentStep >= s.num ? "rgba(197, 160, 89, 0.08)" : "#0d0d0d",
-                borderBottom: `3px solid ${
-                  currentStep === s.num
-                    ? "#c5a059"
-                    : currentStep > s.num
-                    ? "#22c55e"
-                    : "#222"
-                }`,
-                padding: "10px 12px",
-                cursor: s.num < currentStep ? "pointer" : "default",
-                transition: "all 0.3s ease",
-              }}
+              className={`booking-step-tab ${currentStep === s.num ? "active" : currentStep > s.num ? "completed" : ""}`}
             >
-              <div style={{ fontSize: "0.65rem", color: currentStep >= s.num ? "#c5a059" : "#555", fontWeight: 700, letterSpacing: "1.5px" }}>
-                STEP 0{s.num}
-              </div>
-              <div style={{ fontSize: "0.82rem", fontWeight: 700, color: currentStep >= s.num ? "#fff" : "#777", marginTop: "2px" }}>
-                {s.label}
-              </div>
+              <div className="booking-step-number">STEP 0{s.num}</div>
+              <div className="booking-step-label">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Form Container Grid */}
         <form onSubmit={handleConfirmReservation}>
-          <div className="booking-wizard-grid">
+          <div className="booking-layout-grid">
             {/* LEFT COLUMN: ACTIVE STEP CONTENT */}
-            <div>
+            <div className="booking-content-column">
               {/* STEP 1: SERVICE CATALOG */}
               {currentStep === 1 && (
                 <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem", flexWrap: "wrap", gap: "0.8rem" }}>
-                    <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", margin: 0 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                    <h3 className="serif" style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", margin: 0 }}>
                       Choose <span className="gold-text">Services & Add-ons</span>
                     </h3>
-                    <span style={{ fontSize: "0.75rem", color: "#888" }}>
-                      Select one or multiple complementary services
+                    <span style={{ fontSize: "0.72rem", color: "#888" }}>
+                      Select one or multiple services
                     </span>
                   </div>
 
                   {/* Category Filter Pills */}
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "8px",
-                      overflowX: "auto",
-                      paddingBottom: "10px",
-                      marginBottom: "1.5rem",
-                      WebkitOverflowScrolling: "touch",
-                    }}
-                  >
+                  <div className="booking-category-bar">
                     {CATEGORIES.map((cat) => (
                       <button
                         key={cat}
@@ -703,19 +664,7 @@ const Booking: React.FC = () => {
                           soundEffects.playSoftClick();
                           setSelectedCategory(cat);
                         }}
-                        style={{
-                          background: selectedCategory === cat ? "var(--gold-gradient)" : "#111",
-                          color: selectedCategory === cat ? "#000" : "#aaa",
-                          border: selectedCategory === cat ? "none" : "1px solid #222",
-                          padding: "6px 14px",
-                          borderRadius: "20px",
-                          fontSize: "0.7rem",
-                          fontWeight: 700,
-                          letterSpacing: "1px",
-                          cursor: "pointer",
-                          whiteSpace: "nowrap",
-                          transition: "all 0.2s ease",
-                        }}
+                        className={`booking-category-pill ${selectedCategory === cat ? "active" : ""}`}
                       >
                         {cat}
                       </button>
@@ -723,16 +672,7 @@ const Booking: React.FC = () => {
                   </div>
 
                   {/* Services Grid */}
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
-                      gap: "12px",
-                      maxHeight: "520px",
-                      overflowY: "auto",
-                      paddingRight: "4px",
-                    }}
-                  >
+                  <div className="booking-services-grid">
                     {SERVICES_CATALOG.filter(
                       (s) => selectedCategory === "All" || s.category === selectedCategory
                     ).map((service) => {
@@ -741,20 +681,7 @@ const Booking: React.FC = () => {
                         <div
                           key={service.id}
                           onClick={() => toggleServiceSelection(service)}
-                          style={{
-                            background: isSelected ? "rgba(197, 160, 89, 0.1)" : "#0c0c0c",
-                            border: isSelected
-                              ? "1.5px solid #c5a059"
-                              : "1px solid rgba(255, 255, 255, 0.07)",
-                            borderRadius: "10px",
-                            padding: "14px",
-                            cursor: "pointer",
-                            transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            gap: "10px",
-                          }}
+                          className={`booking-service-card ${isSelected ? "selected" : ""}`}
                         >
                           <div>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "6px" }}>
@@ -797,7 +724,7 @@ const Booking: React.FC = () => {
                     })}
                   </div>
 
-                  <div style={{ marginTop: "1.8rem", display: "flex", justifyContent: "flex-end" }}>
+                  <div className="booking-nav-actions" style={{ justifyContent: "flex-end" }}>
                     <button
                       type="button"
                       onClick={() => {
@@ -819,29 +746,22 @@ const Booking: React.FC = () => {
               {/* STEP 2: ARTISAN SELECTION */}
               {currentStep === 2 && (
                 <div>
-                  <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", marginBottom: "0.4rem" }}>
+                  <h3 className="serif" style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", marginBottom: "0.3rem" }}>
                     Select Your <span className="gold-text">Master Artisan</span>
                   </h3>
-                  <p style={{ color: "#888", fontSize: "0.82rem", marginBottom: "1.5rem" }}>
+                  <p style={{ color: "#888", fontSize: "0.8rem", marginBottom: "1.2rem" }}>
                     Choose your dedicated craftsman or allow us to match you with the first available chair.
                   </p>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "14px" }}>
+                  <div className="booking-artisans-grid">
                     {/* First Available Option */}
                     <div
                       onClick={() => {
                         soundEffects.playSoftClick();
                         setSelectedArtisan("First Available Artisan");
                       }}
-                      style={{
-                        background: selectedArtisan === "First Available Artisan" ? "rgba(197, 160, 89, 0.12)" : "#0c0c0c",
-                        border: selectedArtisan === "First Available Artisan" ? "1.5px solid #c5a059" : "1px solid rgba(255, 255, 255, 0.08)",
-                        borderRadius: "10px",
-                        padding: "16px",
-                        cursor: "pointer",
-                        textAlign: "center",
-                        transition: "all 0.25s ease",
-                      }}
+                      className={`booking-artisan-card ${selectedArtisan === "First Available Artisan" ? "selected" : ""}`}
+                      style={{ textAlign: "center" }}
                     >
                       <div style={{ marginBottom: "8px" }}>
                         <LuxuryIcon name="lightning" size={24} color="#c5a059" />
@@ -862,14 +782,7 @@ const Booking: React.FC = () => {
                             soundEffects.playSoftClick();
                             setSelectedArtisan(artisan.name);
                           }}
-                          style={{
-                            background: isSelected ? "rgba(197, 160, 89, 0.12)" : "#0c0c0c",
-                            border: isSelected ? "1.5px solid #c5a059" : "1px solid rgba(255, 255, 255, 0.08)",
-                            borderRadius: "10px",
-                            padding: "16px",
-                            cursor: "pointer",
-                            transition: "all 0.25s ease",
-                          }}
+                          className={`booking-artisan-card ${isSelected ? "selected" : ""}`}
                         >
                           <div style={{ display: "flex", gap: "10px", alignItems: "center", marginBottom: "10px" }}>
                             <img
@@ -901,7 +814,7 @@ const Booking: React.FC = () => {
                     })}
                   </div>
 
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                  <div className="booking-nav-actions">
                     <button type="button" onClick={() => setCurrentStep(1)} className="btn-outline">
                       ← BACK
                     </button>
@@ -922,14 +835,14 @@ const Booking: React.FC = () => {
               {/* STEP 3: DATE & TIME SLOT MATRIX */}
               {currentStep === 3 && (
                 <div>
-                  <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", marginBottom: "0.4rem" }}>
+                  <h3 className="serif" style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", marginBottom: "0.3rem" }}>
                     Select <span className="gold-text">Date & Time Slot</span>
                   </h3>
-                  <p style={{ color: "#888", fontSize: "0.82rem", marginBottom: "1.5rem" }}>
+                  <p style={{ color: "#888", fontSize: "0.8rem", marginBottom: "1.2rem" }}>
                     Choose an exact slot tailored to our salon operating schedule.
                   </p>
 
-                  <div style={{ marginBottom: "1.8rem" }}>
+                  <div style={{ marginBottom: "1.5rem" }}>
                     <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
                       APPOINTMENT DATE
                     </label>
@@ -948,7 +861,7 @@ const Booking: React.FC = () => {
                         padding: "12px",
                         color: "#fff",
                         borderRadius: "6px",
-                        fontSize: "0.92rem",
+                        fontSize: "16px",
                         fontFamily: "inherit",
                       }}
                     />
@@ -960,11 +873,11 @@ const Booking: React.FC = () => {
                     </label>
 
                     {availableTimeSlots.length === 0 ? (
-                      <div style={{ padding: "24px", background: "#0c0c0c", border: "1px dashed #333", textAlign: "center", color: "#888", fontSize: "0.85rem" }}>
+                      <div style={{ padding: "20px", background: "#0c0c0c", border: "1px dashed #333", textAlign: "center", color: "#888", fontSize: "0.85rem", borderRadius: "8px" }}>
                         The atelier is closed on this date. Please select another day.
                       </div>
                     ) : (
-                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(95px, 1fr))", gap: "8px", maxHeight: "260px", overflowY: "auto", paddingRight: "4px" }}>
+                      <div className="booking-time-slots-grid">
                         {availableTimeSlots.map((slot) => {
                           const disabled = slot.isPast || slot.isBooked;
                           const isSelected = selectedTimeSlot === slot.time;
@@ -978,32 +891,10 @@ const Booking: React.FC = () => {
                                 soundEffects.playSoftClick();
                                 setSelectedTimeSlot(slot.time);
                               }}
-                              style={{
-                                background: isSelected
-                                  ? "var(--gold-gradient)"
-                                  : disabled
-                                  ? "rgba(255, 255, 255, 0.02)"
-                                  : "#0c0c0c",
-                                color: isSelected
-                                  ? "#000"
-                                  : disabled
-                                  ? "#444"
-                                  : "#fff",
-                                border: isSelected
-                                  ? "none"
-                                  : disabled
-                                  ? "1px solid #1a1a1a"
-                                  : "1px solid rgba(197, 160, 89, 0.2)",
-                                padding: "8px 6px",
-                                borderRadius: "6px",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                cursor: disabled ? "not-allowed" : "pointer",
-                                transition: "all 0.2s ease",
-                              }}
+                              className={`booking-time-slot-btn ${isSelected ? "selected" : ""}`}
                             >
                               {slot.display}
-                              {slot.isBooked && <div style={{ fontSize: "0.55rem", color: "#ef4444" }}>BOOKED</div>}
+                              {slot.isBooked && <div style={{ fontSize: "0.55rem", color: "#ef4444", marginTop: "2px" }}>BOOKED</div>}
                             </button>
                           );
                         })}
@@ -1011,7 +902,7 @@ const Booking: React.FC = () => {
                     )}
                   </div>
 
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                  <div className="booking-nav-actions">
                     <button type="button" onClick={() => setCurrentStep(2)} className="btn-outline">
                       ← BACK
                     </button>
@@ -1037,10 +928,10 @@ const Booking: React.FC = () => {
               {/* STEP 4: CLIENT INFORMATION */}
               {currentStep === 4 && (
                 <div>
-                  <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", marginBottom: "0.4rem" }}>
+                  <h3 className="serif" style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)", marginBottom: "0.3rem" }}>
                     Your <span className="gold-text">Information</span>
                   </h3>
-                  <p style={{ color: "#888", fontSize: "0.82rem", marginBottom: "1.5rem" }}>
+                  <p style={{ color: "#888", fontSize: "0.8rem", marginBottom: "1.2rem" }}>
                     Enter your contact details so our concierge can alert you when your seat is ready.
                   </p>
 
@@ -1062,7 +953,7 @@ const Booking: React.FC = () => {
                           padding: "12px",
                           color: "#fff",
                           borderRadius: "6px",
-                          fontSize: "0.92rem",
+                          fontSize: "16px",
                           fontFamily: "inherit",
                         }}
                       />
@@ -1085,7 +976,7 @@ const Booking: React.FC = () => {
                           padding: "12px",
                           color: "#fff",
                           borderRadius: "6px",
-                          fontSize: "0.92rem",
+                          fontSize: "16px",
                           fontFamily: "inherit",
                         }}
                       />
@@ -1107,7 +998,7 @@ const Booking: React.FC = () => {
                           padding: "12px",
                           color: "#fff",
                           borderRadius: "6px",
-                          fontSize: "0.85rem",
+                          fontSize: "16px",
                           fontFamily: "inherit",
                           resize: "none",
                         }}
@@ -1115,7 +1006,7 @@ const Booking: React.FC = () => {
                     </div>
                   </div>
 
-                  <div style={{ marginTop: "2rem", display: "flex", justifyContent: "space-between", gap: "10px" }}>
+                  <div className="booking-nav-actions">
                     <button type="button" onClick={() => setCurrentStep(3)} className="btn-outline">
                       ← BACK
                     </button>
@@ -1123,7 +1014,7 @@ const Booking: React.FC = () => {
                       type="submit"
                       disabled={isSubmitting}
                       className="btn-gold"
-                      style={{ padding: "1rem 2rem", gap: "8px" }}
+                      style={{ padding: "12px 20px", gap: "8px" }}
                     >
                       <LuxuryIcon name="sparkle" size={16} color="#000" />
                       {isSubmitting ? "SECURING PASS..." : "CONFIRM VIP RESERVATION"}
@@ -1134,26 +1025,16 @@ const Booking: React.FC = () => {
             </div>
 
             {/* RIGHT COLUMN: LIVE SUMMARY RECEIPT CARD */}
-            <div
-              style={{
-                background: "#0c0c0c",
-                border: "1px solid rgba(197, 160, 89, 0.25)",
-                borderRadius: "12px",
-                padding: "20px",
-                boxShadow: "0 15px 35px rgba(0, 0, 0, 0.6)",
-                position: "sticky",
-                top: "90px",
-              }}
-            >
-              <div style={{ borderBottom: "1px solid rgba(197, 160, 89, 0.2)", paddingBottom: "10px", marginBottom: "14px" }}>
-                <span className="eyebrow" style={{ fontSize: "0.65rem", marginBottom: "3px" }}>
+            <div className="booking-summary-card">
+              <div style={{ borderBottom: "1px solid rgba(197, 160, 89, 0.2)", paddingBottom: "10px", marginBottom: "12px" }}>
+                <span className="eyebrow" style={{ fontSize: "0.65rem", marginBottom: "2px" }}>
                   SESSION SUMMARY
                 </span>
                 <h4 style={{ color: "#fff", fontSize: "1.05rem", margin: 0 }}>Executive Booking</h4>
               </div>
 
               {/* Selected Services List */}
-              <div style={{ marginBottom: "14px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <div style={{ marginBottom: "12px", display: "flex", flexDirection: "column", gap: "6px" }}>
                 {selectedServices.map((s) => (
                   <div key={s.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem" }}>
                     <span style={{ color: "#ddd" }}>{s.name}</span>
@@ -1164,7 +1045,7 @@ const Booking: React.FC = () => {
                 ))}
               </div>
 
-              <div style={{ borderTop: "1px dashed rgba(255, 255, 255, 0.1)", paddingTop: "10px", marginBottom: "14px", fontSize: "0.78rem", color: "#888" }}>
+              <div style={{ borderTop: "1px dashed rgba(255, 255, 255, 0.1)", paddingTop: "10px", marginBottom: "12px", fontSize: "0.78rem", color: "#888" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
                   <span>Artisan:</span>
                   <span style={{ color: "#fff" }}>{selectedArtisan}</span>
@@ -1183,9 +1064,9 @@ const Booking: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ borderTop: "1px solid rgba(197, 160, 89, 0.3)", paddingTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ borderTop: "1px solid rgba(197, 160, 89, 0.3)", paddingTop: "10px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                 <span style={{ fontSize: "0.72rem", color: "#888", letterSpacing: "1px", textTransform: "uppercase" }}>TOTAL AMOUNT</span>
-                <span style={{ fontSize: "1.3rem", fontWeight: 800, color: "#22c55e" }}>
+                <span style={{ fontSize: "1.25rem", fontWeight: 800, color: "#22c55e" }}>
                   ₦{totalSummary.price.toLocaleString()}
                 </span>
               </div>
@@ -1251,7 +1132,7 @@ const Booking: React.FC = () => {
                   padding: "12px",
                   color: "#fff",
                   borderRadius: "6px",
-                  fontSize: "0.92rem",
+                  fontSize: "16px",
                   marginBottom: "1.2rem",
                 }}
               />
