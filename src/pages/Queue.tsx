@@ -106,8 +106,8 @@ const Queue: React.FC = () => {
 
         {/* WAITING QUEUE LIST */}
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-            <h3 className="serif" style={{ fontSize: "1.4rem", color: "#c5a059", margin: 0 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "0.8rem" }}>
+            <h3 className="serif" style={{ fontSize: "clamp(1.15rem, 3vw, 1.4rem)", color: "#c5a059", margin: 0 }}>
               Up Next in Queue ({queue.length})
             </h3>
             <Link to="/booking" className="btn-gold" style={{ padding: "8px 18px", fontSize: "0.72rem", gap: "6px" }}>

@@ -345,12 +345,12 @@ p {
 @media (max-width: 1024px) {
   .booking-wizard-grid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
+    gap: 2rem;
   }
 
   .contact-grid {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2.5rem;
   }
 }
 
@@ -360,35 +360,63 @@ p {
   }
 
   .page-wrapper {
-    padding: 110px 4% 60px;
+    padding: clamp(85px, 12vw, 110px) 4% 50px;
   }
 
   .booking-steps-nav {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 6px;
   }
 
   .responsive-card-grid {
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
+    gap: 1.2rem;
+  }
+
+  /* Prevent table overflow on mobile */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
 @media (max-width: 480px) {
+  .page-wrapper {
+    padding: 80px 3.5% 40px;
+  }
+
   .ticket-details-grid {
     grid-template-columns: 1fr;
-    gap: 1.2rem;
+    gap: 1rem;
   }
 
   .booking-steps-nav {
     grid-template-columns: repeat(2, 1fr);
+    gap: 4px;
   }
 
   .responsive-card-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .btn-gold, .btn-outline {
+  /* Only full-width inside flex/block flow — not inside flex-row containers */
+  .mobile-full-width {
     width: 100%;
+  }
+
+  /* Hero section adjustments for extra-small screens */
+  .hero-content {
+    padding: 0 5%;
+  }
+}
+
+/* iOS Safe Area / Notch support */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }

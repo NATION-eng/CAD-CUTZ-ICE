@@ -842,9 +842,11 @@ const AdminDashboard: React.FC = () => {
               background: "#0c0c0c",
               border: "1px solid rgba(197, 160, 89, 0.35)",
               borderRadius: "14px",
-              padding: "32px 28px",
+              padding: "clamp(20px, 4vw, 32px)",
               maxWidth: "460px",
-              width: "100%",
+              width: "94%",
+              maxHeight: "90vh",
+              overflowY: "auto",
               boxShadow: "0 25px 60px rgba(0, 0, 0, 0.9)",
             }}
           >

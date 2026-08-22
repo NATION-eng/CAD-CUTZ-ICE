@@ -52,7 +52,7 @@ const perks: { iconName: IconName; title: string; desc: string }[] = [
 
 export const LuxuryHighlights: React.FC = () => {
   return (
-    <section style={{ padding: "80px 6%", background: "#080808", borderTop: "1px solid rgba(197, 160, 89, 0.12)", borderBottom: "1px solid rgba(197, 160, 89, 0.12)" }}>
+    <section style={{ padding: "clamp(50px, 8vw, 80px) 5%", background: "#080808", borderTop: "1px solid rgba(197, 160, 89, 0.12)", borderBottom: "1px solid rgba(197, 160, 89, 0.12)" }}>
       <div className="container" style={{ maxWidth: "1300px" }}>
         <div style={{ textAlign: "center", marginBottom: "4rem" }}>
           <span className="eyebrow">THE CAD CUTZ STANDARD</span>
@@ -69,17 +69,17 @@ export const LuxuryHighlights: React.FC = () => {
               style={{
                 background: "#0c0c0c",
                 border: "1px solid rgba(197, 160, 89, 0.15)",
-                padding: "32px 24px",
+                padding: "clamp(20px, 3vw, 32px) clamp(16px, 2.5vw, 24px)",
                 textAlign: "center",
               }}
             >
               <div style={{ marginBottom: "16px" }}>
                 <LuxuryIcon name={p.iconName} size={32} color="#c5a059" />
               </div>
-              <h3 style={{ fontSize: "1.2rem", color: "#fff", marginBottom: "10px", fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}>
+              <h3 style={{ fontSize: "clamp(1rem, 2.5vw, 1.2rem)", color: "#fff", marginBottom: "10px", fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}>
                 {p.title}
               </h3>
-              <p style={{ fontSize: "0.85rem", color: "#888", lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: "clamp(0.8rem, 1.5vw, 0.85rem)", color: "#888", lineHeight: 1.5, margin: 0 }}>
                 {p.desc}
               </p>
             </div>
@@ -94,7 +94,7 @@ export const LuxuryHighlights: React.FC = () => {
           </h2>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "2rem", marginBottom: "4rem" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "2rem", marginBottom: "4rem" }}>
           {reviews.map((r) => (
             <div
               key={r.id}
@@ -102,7 +102,7 @@ export const LuxuryHighlights: React.FC = () => {
                 background: "#0c0c0c",
                 border: "1px solid rgba(197, 160, 89, 0.2)",
                 borderRadius: "12px",
-                padding: "32px 28px",
+                padding: "clamp(20px, 3.5vw, 32px) clamp(16px, 3vw, 28px)",
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -114,7 +114,7 @@ export const LuxuryHighlights: React.FC = () => {
                     <LuxuryIcon key={idx} name="star" size={14} color="#c5a059" />
                   ))}
                 </div>
-                <p style={{ color: "#ccc", fontSize: "0.92rem", fontStyle: "italic", lineHeight: 1.6, marginBottom: "20px" }}>
+                <p style={{ color: "#ccc", fontSize: "clamp(0.84rem, 1.8vw, 0.92rem)", fontStyle: "italic", lineHeight: 1.6, marginBottom: "20px" }}>
                   "{r.quote}"
                 </p>
               </div>
@@ -133,7 +133,7 @@ export const LuxuryHighlights: React.FC = () => {
             background: "linear-gradient(135deg, rgba(197, 160, 89, 0.15) 0%, rgba(14, 14, 14, 0.95) 100%)",
             border: "1px solid rgba(197, 160, 89, 0.35)",
             borderRadius: "16px",
-            padding: "48px 32px",
+            padding: "clamp(28px, 5vw, 48px) clamp(20px, 4vw, 32px)",
             textAlign: "center",
             display: "flex",
             flexDirection: "column",
@@ -142,13 +142,13 @@ export const LuxuryHighlights: React.FC = () => {
           }}
         >
           <span className="eyebrow" style={{ margin: 0 }}>ELEVATE YOUR IMAGE TODAY</span>
-          <h3 className="serif" style={{ fontSize: "clamp(2rem, 5vw, 3rem)", color: "#fff", margin: 0 }}>
+          <h3 className="serif" style={{ fontSize: "clamp(1.8rem, 5vw, 3rem)", color: "#fff", margin: 0 }}>
             Experience the <span className="gold-text italic">Difference</span>
           </h3>
-          <p style={{ color: "#aaa", maxWidth: "550px", margin: 0 }}>
+          <p style={{ color: "#aaa", maxWidth: "550px", margin: 0, fontSize: "clamp(0.85rem, 1.8vw, 1rem)" }}>
             Claim your seat in the chair today. Book online to bypass waiting rooms and secure priority seating.
           </p>
-          <Link to="/booking" className="btn-gold" style={{ padding: "1.2rem 3rem", gap: "8px" }}>
+          <Link to="/booking" className="btn-gold" style={{ padding: "1.1rem 2.4rem", gap: "8px" }}>
             <LuxuryIcon name="sparkle" size={16} color="#000" />
             RESERVE VIP SESSION NOW
           </Link>

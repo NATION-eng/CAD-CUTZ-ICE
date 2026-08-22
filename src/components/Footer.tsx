@@ -4,7 +4,7 @@ import { LuxuryIcon } from "./LuxuryIcon";
 
 const Footer: React.FC = () => {
   return (
-    <footer style={{ background: "#040404", borderTop: "1px solid rgba(197, 160, 89, 0.2)", padding: "70px 6% 30px", color: "#888" }}>
+    <footer style={{ background: "#040404", borderTop: "1px solid rgba(197, 160, 89, 0.2)", padding: "clamp(40px, 6vw, 70px) 4% 30px", color: "#888" }}>
       <div className="container" style={{ maxWidth: "1240px" }}>
         <div
           style={{
