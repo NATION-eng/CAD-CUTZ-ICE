@@ -17,13 +17,12 @@
     <title>CAD CUTZ & ICE</title>
 
     <script>
-      // 3. SERVICE WORKER REGISTRATION
+      // Automatically unregister stale service workers in development to prevent caching issues
       if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then((reg) => reg.update())
-            .then(() => console.log('PWA Service Worker Registered!'))
-            .catch(err => console.log('Service Worker Failed:', err));
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
         });
       }
     </script>
