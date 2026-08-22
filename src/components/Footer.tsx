@@ -57,11 +57,11 @@ const Footer: React.FC = () => {
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Saturday:</span>
-                <span style={{ color: "#ddd" }}>8:30 AM – 9:30 PM</span>
+                <span style={{ color: "#ddd" }}>5:00 PM – 10:00 PM</span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <span>Sunday:</span>
-                <span style={{ color: "#c5a059" }}>1:00 PM – 8:00 PM</span>
+                <span style={{ color: "#c5a059" }}>8:30 PM – 10:00 PM</span>
               </div>
             </div>
           </div>

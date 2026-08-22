@@ -7,7 +7,7 @@ export const SALON_HOURS: SalonHours = {
   Thursday: { open: "09:00", close: "22:00", isOpen: true },
   Friday: { open: "10:00", close: "17:00", isOpen: true },
   Saturday: { open: "17:00", close: "22:00", isOpen: true },
-  Sunday: { open: "12:00", close: "20:00", isOpen: true },
+  Sunday: { open: "20:30", close: "22:00", isOpen: true },
 };
 
 export const ARTISANS: Artisan[] = [
