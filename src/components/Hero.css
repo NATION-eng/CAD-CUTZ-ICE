@@ -1,0 +1,81 @@
+/* src/components/Hero.css */
+.hero {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  background: 
+    linear-gradient(to bottom, rgba(5,5,5,0.7) 0%, rgba(5,5,5,0.4) 50%, rgba(5,5,5,1) 100%),
+    url("https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074") center/cover no-repeat;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+}
+
+.hero-Eyebrow {
+  color: var(--gold);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: block;
+  opacity: 0;
+  animation: fadeInUp 0.8s var(--ease-out) forwards;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 10vw, 6rem);
+  line-height: 1.05;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s var(--ease-out) 0.2s forwards;
+}
+
+.hero-title .gold-text {
+  display: block; /* Break line for impact */
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400; /* Lighter weight for elegance */
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1.5rem;
+  opacity: 0;
+  animation: fadeInUp 0.8s var(--ease-out) 0.4s forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .hero {
+    background-position: 70% center; /* Shift image to show barber action better on mobile */
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+  
+  .btn-gold, .btn-outline {
+    width: 100%;
+  }
+}
