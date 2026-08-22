@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { soundEffects } from "../utils/soundEffects";
 import "./Navbar.css";
 
 const Navbar: React.FC = () => {
@@ -35,7 +34,6 @@ const Navbar: React.FC = () => {
   }, [location.pathname]);
 
   const toggleMenu = () => {
-    soundEffects.playSoftClick();
     setIsMenuOpen((prev) => !prev);
   };
 
@@ -51,7 +49,7 @@ const Navbar: React.FC = () => {
   return (
     <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
       {/* Brand Logo */}
-      <Link to="/" className="logo-container" onClick={() => soundEffects.playSoftClick()}>
+      <Link to="/" className="logo-container">
         <span className="logo-main">CAD</span>
         <span className="logo-sub">CUTZ & ICE</span>
       </Link>
@@ -66,7 +64,6 @@ const Navbar: React.FC = () => {
                 key={link.path}
                 to={link.path}
                 className="nav-queue-pill"
-                onClick={() => soundEffects.playSoftClick()}
               >
                 <span className="queue-dot"></span>
                 <span>{link.name}</span>
@@ -78,7 +75,6 @@ const Navbar: React.FC = () => {
               key={link.path}
               to={link.path}
               className={`nav-link ${isActive ? "active" : ""}`}
-              onClick={() => soundEffects.playSoftClick()}
             >
               {link.name}
             </Link>
@@ -87,7 +83,6 @@ const Navbar: React.FC = () => {
         <Link
           to="/booking"
           className="btn-book-nav"
-          onClick={() => soundEffects.playSoftClick()}
         >
           BOOK APPOINTMENT
         </Link>
@@ -112,7 +107,6 @@ const Navbar: React.FC = () => {
             key={link.path}
             to={link.path}
             className={`mobile-link ${location.pathname === link.path ? "active" : ""}`}
-            onClick={() => soundEffects.playSoftClick()}
           >
             {link.name}
           </Link>
@@ -121,7 +115,6 @@ const Navbar: React.FC = () => {
           to="/booking"
           className="btn-gold"
           style={{ marginTop: "1.5rem" }}
-          onClick={() => soundEffects.playSoftClick()}
         >
           BOOK APPOINTMENT
         </Link>
