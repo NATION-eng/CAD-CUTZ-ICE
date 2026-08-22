@@ -49,15 +49,15 @@ const Services: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "140px 6% 90px", background: "#050505", minHeight: "100vh", color: "#fff" }}>
-      <div className="container" style={{ maxWidth: "1140px" }}>
+    <div className="page-wrapper">
+      <div className="container">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <span className="eyebrow">CAD CUTZ & ICE • PRICE TARIFF</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2.5rem, 6vw, 4.2rem)", margin: "0 0 1rem" }}>
+          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
             The <span className="gold-text italic">Service Menu</span>
           </h1>
-          <p style={{ color: "#888", maxWidth: "620px", margin: "0 auto", fontSize: "0.95rem" }}>
+          <p style={{ color: "#888", maxWidth: "620px", margin: "0 auto" }}>
             Masterfully curated treatments for the modern gentleman. Every service includes our signature consultation and hot towel finish.
           </p>
         </div>
@@ -78,7 +78,7 @@ const Services: React.FC = () => {
           }}
         >
           {/* Category Tabs */}
-          <div style={{ display: "flex", gap: "8px", overflowX: "auto", maxWidth: "100%", paddingBottom: "4px" }}>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", maxWidth: "100%", paddingBottom: "4px", WebkitOverflowScrolling: "touch" }}>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -91,9 +91,9 @@ const Services: React.FC = () => {
                   background: activeCategory === cat ? "var(--gold-gradient)" : "transparent",
                   color: activeCategory === cat ? "#000" : "#aaa",
                   border: activeCategory === cat ? "none" : "1px solid #222",
-                  padding: "8px 16px",
+                  padding: "6px 14px",
                   borderRadius: "20px",
-                  fontSize: "0.72rem",
+                  fontSize: "0.7rem",
                   fontWeight: 700,
                   letterSpacing: "1px",
                   cursor: "pointer",
@@ -107,7 +107,7 @@ const Services: React.FC = () => {
           </div>
 
           {/* Search Bar */}
-          <div style={{ minWidth: "220px" }}>
+          <div style={{ flex: "1 1 180px", maxWidth: "260px" }}>
             <input
               type="text"
               placeholder="Search services..."

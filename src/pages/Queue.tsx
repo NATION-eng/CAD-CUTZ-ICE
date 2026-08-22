@@ -50,15 +50,15 @@ const Queue: React.FC = () => {
   }, []);
 
   return (
-    <div style={{ padding: "140px 6% 90px", background: "#050505", minHeight: "100vh", color: "#fff" }}>
+    <div className="page-wrapper">
       <div className="container" style={{ maxWidth: "1000px" }}>
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <span className="eyebrow">LIVE FROM THE ATELIER FLOOR</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2.5rem, 6vw, 4.2rem)", margin: "0 0 1rem" }}>
+          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
             The Live <span className="gold-text italic">Waiting List</span>
           </h1>
-          <p style={{ color: "#888", maxWidth: "600px", margin: "0 auto", fontSize: "0.95rem" }}>
+          <p style={{ color: "#888", maxWidth: "600px", margin: "0 auto" }}>
             Real-time synchronization with our studio floor. See who is currently in-chair and upcoming reservations.
           </p>
         </div>

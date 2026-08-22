@@ -216,15 +216,15 @@ const Styles: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "140px 6% 90px", background: "#050505", minHeight: "100vh" }}>
-      <div className="container" style={{ maxWidth: "1360px" }}>
+    <div className="page-wrapper">
+      <div className="container">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3.5rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <span className="eyebrow">THE ATELIER LOOKBOOK</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2.5rem, 6vw, 4.2rem)", margin: "0 0 1rem" }}>
+          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
             Curated <span className="gold-text italic">Signature Cuts</span>
           </h1>
-          <p style={{ color: "#888", maxWidth: "600px", margin: "0 auto", fontSize: "0.95rem" }}>
+          <p style={{ color: "#888", maxWidth: "600px", margin: "0 auto" }}>
             Explore our master portfolio of 22 bespoke cuts. Click any style to automatically pre-fill your booking session.
           </p>
         </div>
@@ -236,16 +236,16 @@ const Styles: React.FC = () => {
             justifyContent: "space-between",
             alignItems: "center",
             flexWrap: "wrap",
-            gap: "1.2rem",
-            marginBottom: "3rem",
+            gap: "1rem",
+            marginBottom: "2.5rem",
             background: "#0c0c0c",
-            padding: "16px 20px",
+            padding: "14px 16px",
             borderRadius: "10px",
             border: "1px solid rgba(197, 160, 89, 0.2)",
           }}
         >
           {/* Category Tabs */}
-          <div style={{ display: "flex", gap: "8px", overflowX: "auto", maxWidth: "100%", paddingBottom: "4px" }}>
+          <div style={{ display: "flex", gap: "8px", overflowX: "auto", maxWidth: "100%", paddingBottom: "4px", WebkitOverflowScrolling: "touch" }}>
             {CATEGORIES.map((cat) => (
               <button
                 key={cat}
@@ -258,9 +258,9 @@ const Styles: React.FC = () => {
                   background: selectedCategory === cat ? "var(--gold-gradient)" : "transparent",
                   color: selectedCategory === cat ? "#000" : "#aaa",
                   border: selectedCategory === cat ? "none" : "1px solid #222",
-                  padding: "8px 16px",
+                  padding: "6px 14px",
                   borderRadius: "20px",
-                  fontSize: "0.72rem",
+                  fontSize: "0.7rem",
                   fontWeight: 700,
                   letterSpacing: "1px",
                   cursor: "pointer",
@@ -274,7 +274,7 @@ const Styles: React.FC = () => {
           </div>
 
           {/* Search Input */}
-          <div style={{ position: "relative", minWidth: "240px" }}>
+          <div style={{ position: "relative", flex: "1 1 200px", maxWidth: "280px" }}>
             <input
               type="text"
               placeholder="Search style or cut..."
@@ -296,17 +296,11 @@ const Styles: React.FC = () => {
 
         {/* Lookbook Grid */}
         {filteredStyles.length === 0 ? (
-          <div style={{ padding: "60px", textAlign: "center", border: "1px dashed #333", borderRadius: "10px", color: "#888" }}>
+          <div style={{ padding: "60px 20px", textAlign: "center", border: "1px dashed #333", borderRadius: "10px", color: "#888" }}>
             No styles match your search criteria. Try a different query.
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(290px, 1fr))",
-              gap: "2.5rem",
-            }}
-          >
+          <div className="responsive-card-grid">
             {filteredStyles.map((style) => (
               <div
                 key={style.id}

@@ -52,7 +52,7 @@ const Contact: React.FC = () => {
     background: "#050505",
     border: "1px solid rgba(197, 160, 89, 0.25)",
     color: "#fff",
-    padding: "14px",
+    padding: "12px 14px",
     fontSize: "0.9rem",
     fontFamily: "inherit",
     width: "100%",
@@ -61,34 +61,27 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "140px 6% 90px", background: "#050505", minHeight: "100vh", color: "#fff" }}>
-      <div className="container" style={{ maxWidth: "1240px" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "4.5rem",
-            alignItems: "start",
-          }}
-        >
+    <div className="page-wrapper">
+      <div className="container">
+        <div className="contact-grid">
           {/* Left Column: Location & Contact Cards */}
           <div>
             <span className="eyebrow">CONCIERGE & ATELIER LOCATION</span>
-            <h1 className="serif" style={{ fontSize: "clamp(2.4rem, 5vw, 3.8rem)", margin: "0 0 1.5rem" }}>
+            <h1 className="serif" style={{ margin: "0 0 1.2rem" }}>
               Reach <span className="gold-text italic">Our Atelier</span>
             </h1>
-            <p style={{ color: "#888", marginBottom: "2.5rem", fontSize: "0.95rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#888", marginBottom: "2rem", lineHeight: 1.6 }}>
               Whether you wish to arrange a private after-hours VIP session, bridal groom package, or inquire about dreadlock styling, our concierge is at your service.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.8rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {/* Location Card */}
               <div
                 style={{
                   background: "#0c0c0c",
                   border: "1px solid rgba(197, 160, 89, 0.2)",
                   borderRadius: "10px",
-                  padding: "24px",
+                  padding: "20px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
@@ -97,7 +90,7 @@ const Contact: React.FC = () => {
                     ATELIER ADDRESS
                   </span>
                 </div>
-                <p style={{ color: "#ddd", fontSize: "0.9rem", lineHeight: 1.5, margin: "0 0 12px" }}>
+                <p style={{ color: "#ddd", fontSize: "0.88rem", lineHeight: 1.5, margin: "0 0 12px" }}>
                   CAD CUTZ Egbelu-ogbogoro road Opp. SDA Church Egbelu-Mgbaraja, Ogbogoro Town, Obio/Akpor LGA, Port Harcourt, Rivers State.
                 </p>
                 <a
@@ -118,16 +111,16 @@ const Contact: React.FC = () => {
                   background: "#0c0c0c",
                   border: "1px solid rgba(197, 160, 89, 0.2)",
                   borderRadius: "10px",
-                  padding: "24px",
+                  padding: "20px",
                   display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "1.5rem",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                  gap: "1.2rem",
                 }}
               >
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                     <LuxuryIcon name="email" size={14} color="#c5a059" />
-                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "2px", fontWeight: 700 }}>
+                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "1.5px", fontWeight: 700 }}>
                       DIRECT EMAIL
                     </span>
                   </div>
@@ -136,7 +129,7 @@ const Contact: React.FC = () => {
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
                     <LuxuryIcon name="phone" size={14} color="#c5a059" />
-                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "2px", fontWeight: 700 }}>
+                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "1.5px", fontWeight: 700 }}>
                       PHONE / WHATSAPP
                     </span>
                   </div>
@@ -151,22 +144,22 @@ const Contact: React.FC = () => {
             onSubmit={handleSubmit}
             style={{
               background: "#0c0c0c",
-              padding: "2.5rem",
+              padding: "clamp(20px, 4vw, 36px)",
               borderRadius: "14px",
               border: "1px solid rgba(197, 160, 89, 0.3)",
               boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
             }}
           >
-            <h3 className="serif" style={{ fontSize: "1.6rem", marginBottom: "0.5rem" }}>
+            <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", marginBottom: "0.4rem" }}>
               Send an <span className="gold-text">Inquiry</span>
             </h3>
-            <p style={{ color: "#777", fontSize: "0.82rem", marginBottom: "2rem" }}>
+            <p style={{ color: "#777", fontSize: "0.82rem", marginBottom: "1.5rem" }}>
               Leave a note and our front-desk manager will respond within the hour.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div>
-                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "4px" }}>
                   YOUR NAME *
                 </label>
                 <input
@@ -179,9 +172,9 @@ const Contact: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
+                  <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "4px" }}>
                     EMAIL ADDRESS
                   </label>
                   <input
@@ -194,7 +187,7 @@ const Contact: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
+                  <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "4px" }}>
                     PHONE NUMBER
                   </label>
                   <input
@@ -208,7 +201,7 @@ const Contact: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "4px" }}>
                   INQUIRY SUBJECT
                 </label>
                 <select
@@ -224,12 +217,12 @@ const Contact: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "6px" }}>
+                <label style={{ display: "block", fontSize: "0.72rem", color: "#c5a059", letterSpacing: "1.5px", fontWeight: 700, marginBottom: "4px" }}>
                   YOUR MESSAGE *
                 </label>
                 <textarea
                   placeholder="How may our concierge assist your grooming experience today?"
-                  style={{ ...inputStyle, height: "140px", resize: "none" }}
+                  style={{ ...inputStyle, height: "120px", resize: "none" }}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required
@@ -239,7 +232,7 @@ const Contact: React.FC = () => {
               <button
                 type="submit"
                 className="btn-gold"
-                style={{ width: "100%", padding: "14px", marginTop: "8px", gap: "8px" }}
+                style={{ width: "100%", padding: "12px", marginTop: "6px", gap: "8px" }}
                 disabled={loading}
               >
                 <LuxuryIcon name="sparkle" size={16} color="#000" />

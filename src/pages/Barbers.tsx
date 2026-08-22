@@ -26,27 +26,21 @@ const Barbers: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: "140px 6% 90px", background: "var(--bg-black)", minHeight: "100vh" }}>
-      <div className="container" style={{ maxWidth: "1300px" }}>
+    <div className="page-wrapper">
+      <div className="container">
         {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
           <span className="eyebrow">THE CRAFTSMEN</span>
-          <h1 className="serif" style={{ fontSize: "clamp(2.5rem, 6vw, 4.2rem)", margin: "0 0 1rem" }}>
+          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
             The Master <span className="gold-text italic">Artisans</span>
           </h1>
-          <p style={{ color: "var(--gray)", maxWidth: "620px", margin: "0 auto", fontSize: "0.95rem" }}>
+          <p style={{ color: "var(--gray)", maxWidth: "620px", margin: "0 auto" }}>
             The visionary hands behind every contour. Master barbers who transform grooming into high art.
           </p>
         </div>
 
         {/* Artisans Grid */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "3rem",
-          }}
-        >
+        <div className="responsive-card-grid">
           {ARTISANS.map((barber) => {
             const isOccupied = occupiedBarbers.includes(barber.name);
 
