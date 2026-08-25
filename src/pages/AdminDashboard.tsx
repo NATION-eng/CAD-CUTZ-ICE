@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import {
@@ -92,7 +92,7 @@ const AdminDashboard: React.FC = () => {
   );
   const [password, setPassword] = useState("");
   const [showStats, setShowStats] = useState(false);
-  const [activeTab, setActiveTab] = useState<"bookings" | "messages">("bookings");
+  const [activeTab, setActiveTab] = useState<"queue" | "audit" | "messages">("queue");
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [projectedRevenue, setProjectedRevenue] = useState(0);
   const [history, setHistory] = useState<any[]>([]);
@@ -261,135 +261,137 @@ const AdminDashboard: React.FC = () => {
   const handleQuickWalkin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!walkinName.trim()) {
-      toast.error("Please enter the walk-in customer name.");
+      toast.error("Please enter the guest's name.");
       return;
     }
 
     setWalkinLoading(true);
-    const serviceObj = SERVICES_CATALOG.find((s) => s.name === walkinService);
-    const price = serviceObj ? serviceObj.price : 3000;
-    const duration = serviceObj ? serviceObj.duration : 30;
-
-    const now = new Date();
-    const currentTimeStr = `${now.getHours().toString().padStart(2, "0")}:${now
-      .getMinutes()
-      .toString()
-      .padStart(2, "0")}`;
-
     try {
+      const matchedService = SERVICES_CATALOG.find((s) => s.name === walkinService) || SERVICES_CATALOG[0];
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
       await addDoc(collection(db, "bookings"), {
-        customerName: `${walkinName.trim()} (Walk-in)`,
+        customerName: walkinName.trim() + " (Walk-in)",
         phone: walkinPhone.trim() || "Walk-in Guest",
-        service: walkinService,
-        services: [walkinService],
-        price: price,
-        totalPrice: price,
-        duration: duration,
+        service: matchedService.name,
+        services: [matchedService.name],
+        price: matchedService.price,
+        totalPrice: matchedService.price,
+        duration: matchedService.duration,
         artisan: walkinArtisan,
         date: selectedDate,
-        time: currentTimeStr,
+        time: timeStr,
         status: "active",
-        isReady: false,
+        isReady: true,
         createdAt: serverTimestamp(),
       });
 
-      soundEffects.playSuccessChime();
-      toast.success(`${walkinName} was placed into the active queue!`, "Walk-in Added");
-      setShowWalkinModal(false);
       setWalkinName("");
       setWalkinPhone("");
+      setShowWalkinModal(false);
+      soundEffects.playSuccessChime();
+      toast.success("Walk-in client added to live queue!", "Queue Updated");
     } catch (err: any) {
-      toast.error("Walk-in error: " + err.message);
+      toast.error("Failed to add walk-in: " + err.message);
     } finally {
       setWalkinLoading(false);
     }
   };
 
-  // Delay Session (+15 Mins)
-  const handleDelaySession = async (booking: Booking) => {
-    const [h, m] = (booking.time || "12:00").split(":").map(Number);
-    const newMins = (m + 15) % 60;
-    const newHours = h + Math.floor((m + 15) / 60);
-    const newTime = `${newHours.toString().padStart(2, "0")}:${newMins.toString().padStart(2, "0")}`;
-
+  // Delay Session +15 Minutes
+  const handleDelaySession = async (b: Booking) => {
     try {
-      await updateDoc(doc(db, "bookings", booking.id), {
-        time: newTime,
+      const scheduled = parseTimeWithDate(b.time, selectedDate);
+      const newTime = new Date(scheduled.getTime() + 15 * 60000);
+      const newTimeStr = newTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+      await updateDoc(doc(db, "bookings", b.id), {
+        time: newTimeStr,
       });
-      toast.info(`Updated scheduled time for ${booking.customerName} to ${newTime}`);
+      soundEffects.playSoftClick();
+      toast.info(`Session delayed by 15 mins for ${b.customerName} (New time: ${newTimeStr})`);
     } catch (err: any) {
       toast.error("Error delaying session: " + err.message);
     }
   };
 
-  // Mark No-Show
-  const handleMarkNoShow = async (bookingId: string, name: string) => {
+  // Mark Client as No-Show
+  const handleMarkNoShow = async (id: string, name: string) => {
     const confirmed = await modal.confirm({
       title: "Mark No-Show?",
-      message: `Are you sure you want to mark ${name} as a no-show? This will remove them from the active queue.`,
+      message: `Are you sure you want to mark ${name} as a no-show? This will release the chair.`,
       confirmText: "MARK NO-SHOW",
+      cancelText: "CANCEL",
       isDestructive: true,
     });
 
     if (confirmed) {
       try {
-        await updateDoc(doc(db, "bookings", bookingId), {
+        await updateDoc(doc(db, "bookings", id), {
           status: "no-show",
         });
-        toast.warning(`Marked ${name} as no-show.`);
+        soundEffects.playSoftClick();
+        toast.warning(`${name} marked as no-show.`);
       } catch (err: any) {
-        toast.error("Error: " + err.message);
+        toast.error("Error updating status: " + err.message);
       }
     }
   };
 
   // Delete Booking
-  const handleDeleteBooking = async (bookingId: string) => {
+  const handleDeleteBooking = async (id: string) => {
     const confirmed = await modal.confirm({
-      title: "Delete Booking Record?",
-      message: "Are you sure you want to permanently delete this reservation record?",
-      confirmText: "DELETE RECORD",
+      title: "Delete Record?",
+      message: "Are you sure you want to remove this booking from the active queue?",
+      confirmText: "DELETE",
       isDestructive: true,
     });
 
     if (confirmed) {
       try {
-        await deleteDoc(doc(db, "bookings", bookingId));
-        toast.info("Booking record deleted.");
+        await deleteDoc(doc(db, "bookings", id));
+        soundEffects.playSoftClick();
+        toast.info("Booking removed from schedule.");
       } catch (err: any) {
-        toast.error("Delete failed: " + err.message);
+        toast.error("Failed to delete booking: " + err.message);
       }
     }
   };
 
-  // Export Daily Financial Statement as PDF
+  // Export PDF Statement
   const handleExportPDF = () => {
-    const salonNet = Math.round(stats.revenue * ((100 - commissionRate) / 100));
-    const artisanPool = Math.round(stats.revenue * (commissionRate / 100));
+    try {
+      soundEffects.playSoftClick();
+      const salonNet = Math.round(stats.revenue * ((100 - commissionRate) / 100));
+      const artisanPool = Math.round(stats.revenue * (commissionRate / 100));
 
-    exportDailyPdfReport({
-      date: selectedDate,
-      totalGross: stats.revenue,
-      salonNet,
-      artisanPool,
-      commissionRate,
-      barberEarnings: stats.barberEarnings,
-      bookings,
-      history,
-    });
-
-    soundEffects.playSoftClick();
-    toast.success(`Generated official PDF statement for ${selectedDate}`);
+      exportDailyPdfReport({
+        date: selectedDate,
+        totalGross: stats.revenue,
+        salonNet,
+        artisanPool,
+        commissionRate,
+        barberEarnings: stats.barberEarnings,
+        bookings,
+        history,
+      });
+      toast.success("Financial statement PDF generated!");
+    } catch (err: any) {
+      toast.error("Failed to generate PDF: " + err.message);
+    }
   };
 
-  // Cleanup completed records older than 30 days
+  // Archive Cleanup
   const handleCleanup = async () => {
     const confirmed = await modal.confirm({
-      title: "Prune Historical Data?",
-      message: "Permanently delete completed records older than 30 days from the database?",
-      confirmText: "PRUNE OLD RECORDS",
+      title: "Prune Old Records?",
+      message: "This will permanently purge completed bookings older than 30 days.",
+      confirmText: "PURGE ARCHIVES",
       isDestructive: true,
     });
+
     if (!confirmed) return;
 
     try {
@@ -413,22 +415,33 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Derived KPI metrics
+  const kpis = useMemo(() => {
+    const inChairCount = bookings.filter((b) => b.status === "in-chair").length;
+    const queueCount = bookings.filter((b) => b.status === "active").length;
+    const totalDayValue = stats.revenue + projectedRevenue;
+    return { inChairCount, queueCount, totalDayValue };
+  }, [bookings, stats.revenue, projectedRevenue]);
+
+  const unreadMessagesCount = useMemo(
+    () => messages.filter((m) => m.status === "unread").length,
+    [messages]
+  );
+
   // --- LOGIN SCREEN ---
   if (!isAdmin) {
     return (
       <div className="login-container">
-        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+        <div className="login-card">
           <span className="eyebrow">CAD CUTZ ATELIER</span>
-          <h2 className="login-title serif" style={{ fontSize: "2.2rem", color: "#fff" }}>
-            Staff Operations Portal
-          </h2>
-          <p style={{ color: "#888", fontSize: "0.85rem", maxWidth: "340px", margin: "0 auto" }}>
-            Enter your staff security passcode to orchestrate the salon queue and view revenue.
+          <h2 className="login-title serif">Staff Operations</h2>
+          <p style={{ color: "#888", fontSize: "0.82rem", margin: "0 auto", lineHeight: 1.5 }}>
+            Authorized artisan access only. Enter your master security passcode to enter.
           </p>
 
           <div
             style={{
-              marginTop: "14px",
+              marginTop: "16px",
               display: "inline-flex",
               alignItems: "center",
               gap: "8px",
@@ -449,335 +462,543 @@ const AdminDashboard: React.FC = () => {
                 color: "#000",
                 border: "none",
                 borderRadius: "10px",
-                padding: "2px 8px",
+                padding: "3px 8px",
                 fontSize: "0.65rem",
-                fontWeight: 700,
+                fontWeight: 800,
                 cursor: "pointer",
               }}
             >
               Autofill
             </button>
           </div>
-        </div>
 
-        <form
-          className="login-form"
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (password === ADMIN_SECRET) {
-              await requestPermission();
-              setIsAdmin(true);
-              localStorage.setItem("barber_admin", "true");
-              soundEffects.playSuccessChime();
-              toast.success("Welcome to Staff Operations Console", "Authenticated");
-            } else {
-              toast.error("Invalid passcode. Use CAD123 to enter.", "Access Denied");
-            }
-          }}
-        >
-          <input
-            type="password"
-            placeholder="Enter Passcode (CAD123)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="login-input"
-            autoFocus
-          />
-          <button type="submit" className="login-btn">
-            ENTER ATELIER CONSOLE
-          </button>
-        </form>
+          <form
+            className="login-form"
+            onSubmit={async (e) => {
+              e.preventDefault();
+              if (password === ADMIN_SECRET) {
+                await requestPermission();
+                setIsAdmin(true);
+                localStorage.setItem("barber_admin", "true");
+                soundEffects.playSuccessChime();
+                toast.success("Welcome to Staff Operations Console", "Authenticated");
+              } else {
+                toast.error("Invalid passcode. Use CAD123 to enter.", "Access Denied");
+              }
+            }}
+          >
+            <input
+              type="password"
+              placeholder="Enter Passcode"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="login-input"
+              autoFocus
+            />
+            <button type="submit" className="login-btn">
+              AUTHENTICATE CONSOLE
+            </button>
+          </form>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="admin-container">
-      {/* HEADER */}
-      <div className="admin-header">
-        <div className="header-tabs">
-          <div
-            onClick={() => setActiveTab("bookings")}
-            className={`tab-item ${activeTab === "bookings" ? "active" : ""}`}
-          >
-            <h1 className="tab-title">LIVE QUEUE & SESSIONS</h1>
-          </div>
-          <div
-            onClick={() => setActiveTab("messages")}
-            className={`tab-item ${activeTab === "messages" ? "active" : ""}`}
-            style={{ position: "relative" }}
-          >
-            <h1 className="tab-title">CONCIERGE MESSAGES</h1>
-            {messages.filter((m) => m.status === "unread").length > 0 && (
-              <span className="badge">
-                {messages.filter((m) => m.status === "unread").length}
-              </span>
-            )}
+      {/* --- TOP APP BAR --- */}
+      <header className="admin-appbar">
+        <div className="admin-brand">
+          <span className="brand-logo-badge">CAD</span>
+          <div className="brand-info">
+            <h1 className="brand-title">STAFF ATELIER</h1>
+            <span className="brand-status-indicator">
+              <span className="pulse-dot" /> LIVE DISPATCH
+            </span>
           </div>
         </div>
 
-        <div className="header-actions">
+        <div className="appbar-actions">
           <button
             onClick={() => setShowWalkinModal(true)}
-            className="btn-insights"
-            style={{ background: "var(--gold-gradient)", color: "#000", border: "none", display: "inline-flex", alignItems: "center", gap: "6px" }}
+            className="appbar-btn-primary"
           >
             <LuxuryIcon name="lightning" size={14} color="#000" />
-            QUICK WALK-IN ENTRY
+            + QUICK WALK-IN
           </button>
-          <button onClick={() => setShowStats(true)} className="btn-insights" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <LuxuryIcon name="diamond" size={14} color="#c5a059" />
-            FINANCIAL INSIGHTS
+
+          <button
+            onClick={() => setShowStats(true)}
+            className="appbar-icon-btn"
+            title="Financial Insights & Splits"
+          >
+            <LuxuryIcon name="diamond" size={13} color="#c5a059" />
+            <span>INSIGHTS</span>
           </button>
-          <button onClick={handleExportPDF} className="btn-action" style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-            <LuxuryIcon name="download" size={14} color="#c5a059" />
-            EXPORT PDF STATEMENT
+
+          <button
+            onClick={handleExportPDF}
+            className="appbar-icon-btn"
+            title="Export Daily Financial Statement"
+          >
+            <LuxuryIcon name="download" size={13} color="#c5a059" />
+            <span>PDF</span>
           </button>
-          <button onClick={() => navigate("/")} className="btn-action">
-            PUBLIC SITE
+
+          <button
+            onClick={() => navigate("/")}
+            className="appbar-icon-btn"
+            title="View Public Salon Site"
+          >
+            <span>SITE ↗</span>
           </button>
+
           <button
             onClick={() => {
               setIsAdmin(false);
               localStorage.removeItem("barber_admin");
               toast.info("Logged out of staff session.");
             }}
-            className="btn-logout"
+            className="appbar-icon-btn destructive"
+            title="Logout"
           >
-            LOGOUT
+            <span>LOGOUT</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      {activeTab === "bookings" ? (
-        <div className="admin-dashboard-grid">
-          {/* LEFT: LIVE QUEUE & IN-CHAIR CARDS */}
-          <div>
-            <div className="queue-value-card">
-              <span className="label-small">LIVE ATELIER REVENUE PROJECTION</span>
-              <h2 className="big-value">
-                ₦{(projectedRevenue + stats.revenue).toLocaleString()}
-              </h2>
-              <div className="value-detail">
-                {selectedDate} Closed Total: ₦{stats.revenue.toLocaleString()} | Active Queue Projected: ₦{projectedRevenue.toLocaleString()}
-              </div>
-            </div>
-
-            <div className="bookings-grid">
-              {bookings.length === 0 ? (
-                <div style={{ gridColumn: "1 / -1", padding: "60px", textAlign: "center", border: "1px dashed #333", borderRadius: "10px", color: "#888" }}>
-                  <div style={{ marginBottom: "10px" }}>
-                    <LuxuryIcon name="chair" size={32} color="#c5a059" />
-                  </div>
-                  <h3 className="serif" style={{ color: "#fff", fontSize: "1.3rem" }}>All Chairs Clear</h3>
-                  <p style={{ fontSize: "0.85rem", color: "#666" }}>No active or in-chair reservations for this date.</p>
-                </div>
-              ) : (
-                bookings.map((b) => {
-                  const isInChair = b.status === "in-chair";
-
-                  return (
-                    <div
-                      key={b.id}
-                      className="booking-card"
-                      style={{
-                        border: isInChair
-                          ? "1.5px solid #22c55e"
-                          : "1px solid rgba(197, 160, 89, 0.2)",
-                        background: isInChair ? "rgba(34, 197, 94, 0.04)" : "#0c0c0c",
-                      }}
-                    >
-                      <div className="booking-card-header">
-                        <span
-                          className="time-badge"
-                          style={{
-                            background: isInChair ? "rgba(34, 197, 94, 0.2)" : "#1a1a1a",
-                            color: isInChair ? "#22c55e" : "#c5a059",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            gap: "4px",
-                          }}
-                        >
-                          <LuxuryIcon name="clock" size={12} color={isInChair ? "#22c55e" : "#c5a059"} />
-                          {b.time}
-                        </span>
-                        <span className="price-tag" style={{ color: "#22c55e" }}>
-                          ₦{Number(b.price || 0).toLocaleString()}
-                        </span>
-                      </div>
-
-                      <h3 className="customer-name">{b.customerName}</h3>
-                      <p className="service-info">
-                        <strong>{b.service}</strong> • Artisan: <span style={{ color: "#c5a059" }}>{b.artisan}</span>
-                      </p>
-
-                      {b.phone && (
-                        <div style={{ fontSize: "0.75rem", color: "#888", marginBottom: "12px", display: "flex", alignItems: "center", gap: "4px" }}>
-                          <LuxuryIcon name="phone" size={12} color="#888" />
-                          {b.phone}
-                        </div>
-                      )}
-
-                      {/* IN-CHAIR SESSION TIMER */}
-                      {isInChair && (
-                        <div className="session-timer-container">
-                          <span style={{ fontSize: "0.7rem", color: "#888", display: "block", marginBottom: "2px" }}>
-                            ESTIMATED REMAINING
-                          </span>
-                          <SessionTimer
-                            startTime={b.sessionStartedAt}
-                            duration={b.duration}
-                            onTimeUp={() => {
-                              soundEffects.playSessionReadyAlert();
-                              toast.info(`Session for ${b.customerName} has completed allocated time.`);
-                            }}
-                          />
-                        </div>
-                      )}
-
-                      {/* ACTION BUTTONS */}
-                      <div className="card-actions" style={{ flexWrap: "wrap", gap: "8px" }}>
-                        <button
-                          onClick={() => {
-                            const newStatus = b.status === "active" ? "in-chair" : "completed";
-                            const updateData: any = { status: newStatus };
-                            if (newStatus === "in-chair") {
-                              updateData.sessionStartedAt = serverTimestamp();
-                              soundEffects.playSuccessChime();
-                              toast.success(`${b.customerName} is now in chair with ${b.artisan}`);
-                            } else {
-                              updateData.completedAt = serverTimestamp();
-                              soundEffects.playSuccessChime();
-                              toast.success(`Session completed for ${b.customerName}!`);
-                            }
-                            updateDoc(doc(db, "bookings", b.id), updateData);
-                          }}
-                          className="btn-session"
-                          style={{
-                            background: isInChair
-                              ? "linear-gradient(135deg, #15803d 0%, #22c55e 100%)"
-                              : "var(--gold-gradient)",
-                            color: isInChair ? "#fff" : "#000",
-                            display: "inline-flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            gap: "6px",
-                          }}
-                        >
-                          <LuxuryIcon name={b.status === "active" ? "lightning" : "check"} size={14} color={isInChair ? "#fff" : "#000"} />
-                          {b.status === "active" ? "START SESSION" : "COMPLETE SESSION"}
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleDelaySession(b)}
-                          style={{
-                            background: "transparent",
-                            border: "1px solid #444",
-                            color: "#aaa",
-                            padding: "8px 10px",
-                            borderRadius: "4px",
-                            fontSize: "0.68rem",
-                            cursor: "pointer",
-                          }}
-                          title="Delay +15 Minutes"
-                        >
-                          +15m
-                        </button>
-
-                        <button
-                          type="button"
-                          onClick={() => handleMarkNoShow(b.id, b.customerName)}
-                          style={{
-                            background: "transparent",
-                            border: "1px solid rgba(239, 68, 68, 0.3)",
-                            color: "#ef4444",
-                            padding: "8px 10px",
-                            borderRadius: "4px",
-                            fontSize: "0.68rem",
-                            cursor: "pointer",
-                          }}
-                          title="Mark No-Show"
-                        >
-                          No-Show
-                        </button>
-
-                        <button
-                          onClick={() => handleDeleteBooking(b.id)}
-                          className="btn-delete"
-                          title="Delete Record"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+      {/* --- EXECUTIVE KPI METRICS ROW --- */}
+      <section className="kpi-grid">
+        <div className="kpi-card">
+          <div className="kpi-card-header">
+            <span className="kpi-label">TODAY'S TOTAL TURNOVER</span>
+            <LuxuryIcon name="sparkle" size={14} color="#22c55e" />
           </div>
+          <div className="kpi-value" style={{ color: "#22c55e" }}>
+            ₦{kpis.totalDayValue.toLocaleString()}
+          </div>
+          <span className="kpi-subtext">
+            Settled: ₦{stats.revenue.toLocaleString()} • Pending: ₦{projectedRevenue.toLocaleString()}
+          </span>
+        </div>
 
-          {/* RIGHT: COMPLETED HISTORY ACCORDION */}
-          <div className="history-container">
-            <div className="history-header">
-              <h3 className="section-title">COMPLETED SESSIONS</h3>
+        <div className="kpi-card">
+          <div className="kpi-card-header">
+            <span className="kpi-label">IN-CHAIR NOW</span>
+            <LuxuryIcon name="scissors" size={14} color="#38bdf8" />
+          </div>
+          <div className="kpi-value" style={{ color: "#38bdf8" }}>
+            {kpis.inChairCount} Active
+          </div>
+          <span className="kpi-subtext">Currently receiving treatments</span>
+        </div>
+
+        <div className="kpi-card">
+          <div className="kpi-card-header">
+            <span className="kpi-label">WAITING IN QUEUE</span>
+            <LuxuryIcon name="clock" size={14} color="#c5a059" />
+          </div>
+          <div className="kpi-value" style={{ color: "#c5a059" }}>
+            {kpis.queueCount} Clients
+          </div>
+          <span className="kpi-subtext">Scheduled & awaiting seating</span>
+        </div>
+
+        <div className="kpi-card">
+          <div className="kpi-card-header">
+            <span className="kpi-label">SETTLED SESSIONS</span>
+            <LuxuryIcon name="check" size={14} color="#fff" />
+          </div>
+          <div className="kpi-value">
+            {history.length} Done
+          </div>
+          <span className="kpi-subtext">Completed on {selectedDate}</span>
+        </div>
+      </section>
+
+      {/* --- SEGMENTED TABS (MOBILE & DESKTOP SWITCHER) --- */}
+      <nav className="segmented-nav">
+        <button
+          type="button"
+          onClick={() => setActiveTab("queue")}
+          className={`segmented-tab ${activeTab === "queue" ? "active" : ""}`}
+        >
+          <LuxuryIcon name="lightning" size={13} color={activeTab === "queue" ? "#c5a059" : "#888"} />
+          <span>LIVE QUEUE ({bookings.length})</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("audit")}
+          className={`segmented-tab ${activeTab === "audit" ? "active" : ""}`}
+        >
+          <LuxuryIcon name="diamond" size={13} color={activeTab === "audit" ? "#c5a059" : "#888"} />
+          <span>FINANCIAL AUDIT</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveTab("messages")}
+          className={`segmented-tab ${activeTab === "messages" ? "active" : ""}`}
+        >
+          <LuxuryIcon name="crown" size={13} color={activeTab === "messages" ? "#c5a059" : "#888"} />
+          <span>INQUIRIES</span>
+          {unreadMessagesCount > 0 && (
+            <span className="tab-badge">{unreadMessagesCount}</span>
+          )}
+        </button>
+      </nav>
+
+      {/* --- TAB 1: LIVE QUEUE & IN-CHAIR DISPATCH --- */}
+      {activeTab === "queue" && (
+        <div>
+          {/* Date controls bar */}
+          <div className="date-control-bar">
+            <div className="date-preset-group">
+              <button
+                type="button"
+                onClick={() => setSelectedDate(new Date().toLocaleDateString("en-CA"))}
+                className={`date-preset-btn ${selectedDate === new Date().toLocaleDateString("en-CA") ? "active" : ""}`}
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const y = new Date();
+                  y.setDate(y.getDate() - 1);
+                  setSelectedDate(y.toLocaleDateString("en-CA"));
+                }}
+                className="date-preset-btn"
+              >
+                Yesterday
+              </button>
+            </div>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontSize: "0.72rem", color: "#888", fontWeight: 700 }}>DATE:</span>
               <input
                 type="date"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                className="date-input"
+                className="date-input-picker"
               />
             </div>
+          </div>
 
-            <div className="total-row">
-              <span className="total-label">SETTLED REVENUE:</span>
-              <span className="total-value">₦{stats.revenue.toLocaleString()}</span>
+          <div className="admin-main-grid">
+            {/* LEFT COLUMN: ACTIVE SESSIONS */}
+            <div>
+              <div className="section-header-row">
+                <h3 className="section-headline">
+                  <LuxuryIcon name="chair" size={16} color="#c5a059" />
+                  Active Appointments ({bookings.length})
+                </h3>
+              </div>
+
+              <div className="bookings-grid">
+                {bookings.length === 0 ? (
+                  <div style={{ gridColumn: "1 / -1", padding: "50px 20px", textAlign: "center", border: "1px dashed #222", borderRadius: "12px", background: "#0c0c0c" }}>
+                    <div style={{ marginBottom: "12px" }}>
+                      <LuxuryIcon name="chair" size={32} color="#c5a059" />
+                    </div>
+                    <h4 className="serif" style={{ color: "#fff", fontSize: "1.2rem", margin: "0 0 6px" }}>All Chairs Available</h4>
+                    <p style={{ fontSize: "0.8rem", color: "#777", margin: "0 auto", maxWidth: "340px" }}>
+                      No active reservations queued for {selectedDate}. Use "+ QUICK WALK-IN" to seat an in-person guest.
+                    </p>
+                  </div>
+                ) : (
+                  bookings.map((b) => {
+                    const isInChair = b.status === "in-chair";
+
+                    return (
+                      <div
+                        key={b.id}
+                        className={`booking-card ${isInChair ? "in-chair" : ""}`}
+                      >
+                        <div>
+                          <div className="booking-card-top">
+                            <span className="time-slot-badge">
+                              <LuxuryIcon name="clock" size={12} color={isInChair ? "#22c55e" : "#c5a059"} />
+                              {b.time}
+                            </span>
+                            <span className="booking-price-tag">
+                              ₦{Number(b.price || 0).toLocaleString()}
+                            </span>
+                          </div>
+
+                          <h3 className="booking-client-name">{b.customerName}</h3>
+                          <p className="booking-service-title">{b.service}</p>
+
+                          <div className="booking-meta-row" style={{ marginTop: "8px" }}>
+                            <span>Artisan: <strong className="meta-artisan">{b.artisan}</strong></span>
+                            {b.phone && b.phone !== "Walk-in Guest" && (
+                              <a href={`tel:${b.phone}`} className="meta-phone">
+                                <LuxuryIcon name="phone" size={11} color="#888" />
+                                {b.phone}
+                              </a>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* IN-CHAIR LIVE COUNTDOWN */}
+                        {isInChair && (
+                          <div className="session-timer-box">
+                            <span style={{ fontSize: "0.65rem", color: "#888", display: "block", letterSpacing: "1px", textTransform: "uppercase" }}>
+                              TIME REMAINING IN CHAIR
+                            </span>
+                            <SessionTimer
+                              startTime={b.sessionStartedAt}
+                              duration={b.duration}
+                              onTimeUp={() => {
+                                soundEffects.playSessionReadyAlert();
+                                toast.info(`Session for ${b.customerName} has reached allocated time.`);
+                              }}
+                            />
+                          </div>
+                        )}
+
+                        {/* CONTROLS */}
+                        <div className="card-actions-row">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const newStatus = b.status === "active" ? "in-chair" : "completed";
+                              const updateData: any = { status: newStatus };
+                              if (newStatus === "in-chair") {
+                                updateData.sessionStartedAt = serverTimestamp();
+                                soundEffects.playSuccessChime();
+                                toast.success(`${b.customerName} seated with ${b.artisan}`);
+                              } else {
+                                updateData.completedAt = serverTimestamp();
+                                soundEffects.playSuccessChime();
+                                toast.success(`Session completed & settled for ${b.customerName}!`);
+                              }
+                              updateDoc(doc(db, "bookings", b.id), updateData);
+                            }}
+                            className="btn-primary-action"
+                          >
+                            <LuxuryIcon name={b.status === "active" ? "lightning" : "check"} size={13} color={isInChair ? "#fff" : "#000"} />
+                            {b.status === "active" ? "SEAT IN CHAIR" : "COMPLETE & SETTLE"}
+                          </button>
+
+                          <div className="card-secondary-group">
+                            <button
+                              type="button"
+                              onClick={() => handleDelaySession(b)}
+                              className="btn-secondary-action"
+                              title="Delay 15 Minutes"
+                            >
+                              +15m
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleMarkNoShow(b.id, b.customerName)}
+                              className="btn-secondary-action danger"
+                              title="Mark No-Show"
+                            >
+                              No-Show
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteBooking(b.id)}
+                              className="btn-secondary-action danger"
+                              title="Delete Record"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
 
-            <div className="history-list">
-              {history.length === 0 ? (
-                <p style={{ color: "#555", fontSize: "0.8rem", textAlign: "center", padding: "20px" }}>
-                  No completed sessions on this date yet.
-                </p>
-              ) : (
-                history.map((h: any) => (
-                  <div key={h.id} className="history-item">
-                    <div className="history-top">
-                      <span style={{ fontWeight: 600 }}>{h.customerName}</span>
-                      <span className="history-profit">
-                        +₦{Number(h.price || 0).toLocaleString()}
-                      </span>
+            {/* RIGHT COLUMN: QUICK SETTLED OVERVIEW */}
+            <div className="audit-container">
+              <div className="section-header-row">
+                <h3 className="section-headline" style={{ fontSize: "0.95rem" }}>
+                  <LuxuryIcon name="check" size={14} color="#22c55e" />
+                  Settled Today ({history.length})
+                </h3>
+                <span style={{ fontSize: "0.85rem", color: "#22c55e", fontWeight: 800 }}>
+                  ₦{stats.revenue.toLocaleString()}
+                </span>
+              </div>
+
+              <div className="audit-history-list">
+                {history.length === 0 ? (
+                  <p style={{ color: "#666", fontSize: "0.78rem", textAlign: "center", padding: "20px" }}>
+                    No sessions settled yet for this date.
+                  </p>
+                ) : (
+                  history.slice(0, 8).map((h: any) => (
+                    <div key={h.id} className="history-card-item">
+                      <div className="history-client-info">
+                        <h5>{h.customerName}</h5>
+                        <p>{h.artisan} • {h.service}</p>
+                      </div>
+                      <div className="history-amount-badge">
+                        <span className="amount">+₦{Number(h.price || 0).toLocaleString()}</span>
+                        <span className="time">{h.displayTime}</span>
+                      </div>
                     </div>
-                    <div className="history-bottom">
-                      {h.artisan} • {h.service} • {h.displayTime}
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
           </div>
         </div>
-      ) : (
-        /* MESSAGES INBOX VIEW */
-        <div className="messages-container">
+      )}
+
+      {/* --- TAB 2: FINANCIAL AUDIT & COMMISSION STATEMENT --- */}
+      {activeTab === "audit" && (
+        <div className="audit-container">
+          <div className="section-header-row" style={{ flexWrap: "wrap", gap: "12px", marginBottom: "1.5rem" }}>
+            <div>
+              <h2 className="serif" style={{ fontSize: "1.4rem", margin: "0 0 4px" }}>
+                Financial Atelier Audit
+              </h2>
+              <p style={{ color: "#888", fontSize: "0.78rem", margin: 0 }}>
+                Gross collections, net salon revenue, and artisan commission ledger for {selectedDate}.
+              </p>
+            </div>
+
+            <button
+              onClick={handleExportPDF}
+              className="appbar-btn-primary"
+            >
+              <LuxuryIcon name="download" size={14} color="#000" />
+              DOWNLOAD PDF REPORT
+            </button>
+          </div>
+
+          <div className="audit-kpi-summary">
+            <div>
+              <span className="kpi-label">GROSS SETTLED REVENUE</span>
+              <div className="kpi-value" style={{ color: "#22c55e" }}>
+                ₦{stats.revenue.toLocaleString()}
+              </div>
+            </div>
+            <div>
+              <span className="kpi-label">SALON NET SHARE ({100 - commissionRate}%)</span>
+              <div className="kpi-value" style={{ color: "#c5a059" }}>
+                ₦{Math.round(stats.revenue * ((100 - commissionRate) / 100)).toLocaleString()}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ background: "#070707", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "16px", marginBottom: "1.5rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+              <span className="kpi-label">ARTISAN COMMISSION SPLIT POOL ({commissionRate}%)</span>
+              <span style={{ fontSize: "0.85rem", color: "#38bdf8", fontWeight: 800 }}>
+                ₦{Math.round(stats.revenue * (commissionRate / 100)).toLocaleString()}
+              </span>
+            </div>
+            <input
+              type="range"
+              min="20"
+              max="70"
+              step="5"
+              value={commissionRate}
+              onChange={(e) => setCommissionRate(Number(e.target.value))}
+              style={{ width: "100%", accentColor: "#c5a059" }}
+            />
+          </div>
+
+          <h4 style={{ fontSize: "0.9rem", letterSpacing: "1px", color: "#fff", marginBottom: "12px", textTransform: "uppercase" }}>
+            Artisan Earnings Breakdown
+          </h4>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "10px", marginBottom: "2rem" }}>
+            {Object.entries(stats.barberEarnings).map(([name, val]: [string, any]) => {
+              const artisanCut = Math.round(val * (commissionRate / 100));
+              const percentage = stats.revenue > 0 ? Math.round((val / stats.revenue) * 100) : 0;
+
+              return (
+                <div key={name} style={{ background: "#070707", border: "1px solid rgba(255,255,255,0.06)", borderRadius: "10px", padding: "14px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
+                    <span style={{ fontWeight: 800, color: "#fff", fontSize: "0.9rem" }}>{name}</span>
+                    <span style={{ color: "#22c55e", fontWeight: 700, fontSize: "0.85rem" }}>₦{val.toLocaleString()} gross</span>
+                  </div>
+                  <div style={{ fontSize: "0.72rem", color: "#38bdf8", fontWeight: 600 }}>
+                    Payout ({commissionRate}%): ₦{artisanCut.toLocaleString()}
+                  </div>
+                  <div className="commission-progress-bar">
+                    <div className="commission-progress-fill" style={{ width: `${percentage}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <h4 style={{ fontSize: "0.9rem", letterSpacing: "1px", color: "#fff", marginBottom: "12px", textTransform: "uppercase" }}>
+            Complete Settled Transactions Log ({history.length})
+          </h4>
+
+          <div className="audit-history-list">
+            {history.length === 0 ? (
+              <p style={{ color: "#666", textAlign: "center", padding: "20px", fontSize: "0.82rem" }}>
+                No completed records for {selectedDate}.
+              </p>
+            ) : (
+              history.map((h: any) => (
+                <div key={h.id} className="history-card-item">
+                  <div className="history-client-info">
+                    <h5>{h.customerName}</h5>
+                    <p>{h.artisan} • {h.service} • {h.phone || "Walk-in"}</p>
+                  </div>
+                  <div className="history-amount-badge">
+                    <span className="amount">+₦{Number(h.price || 0).toLocaleString()}</span>
+                    <span className="time">{h.displayTime}</span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* --- TAB 3: CONCIERGE INQUIRIES --- */}
+      {activeTab === "messages" && (
+        <div className="messages-wrapper">
+          <div className="section-header-row">
+            <h3 className="section-headline">
+              <LuxuryIcon name="crown" size={16} color="#c5a059" />
+              Concierge Inquiries ({messages.length})
+            </h3>
+          </div>
+
           {messages.length === 0 ? (
-            <p className="empty-state">No concierge inquiries received yet...</p>
+            <div style={{ textAlign: "center", padding: "60px 20px", background: "#0c0c0c", borderRadius: "12px", border: "1px dashed #222" }}>
+              <p style={{ color: "#666", margin: 0, fontSize: "0.85rem" }}>
+                No guest messages or inquiries in the inbox.
+              </p>
+            </div>
           ) : (
             messages.map((m) => (
               <div
                 key={m.id}
-                className={`message-card ${m.status === "unread" ? "unread" : ""}`}
+                className={`inbox-card ${m.status === "unread" ? "unread" : ""}`}
               >
-                <div className="msg-header">
+                <div className="inbox-card-header">
                   <div>
-                    <h4 className="msg-name">{m.name || "Unknown Guest"}</h4>
-                    <p className="msg-email">
+                    <h4 style={{ margin: "0 0 2px", color: "#c5a059", fontSize: "1rem", fontWeight: 700 }}>
+                      {m.name || "Guest"}
+                    </h4>
+                    <p style={{ margin: 0, fontSize: "0.75rem", color: "#888" }}>
                       {m.email} {m.phone && `• ${m.phone}`}
                     </p>
                   </div>
-                  <div style={{ display: "flex", gap: "10px" }}>
+
+                  <div style={{ display: "flex", gap: "8px" }}>
                     {m.status === "unread" && (
                       <button
+                        type="button"
                         onClick={() => {
                           updateDoc(doc(db, "message", m.id), { status: "read" });
                           toast.info("Message marked as read.");
@@ -789,13 +1010,16 @@ const AdminDashboard: React.FC = () => {
                           padding: "4px 10px",
                           borderRadius: "4px",
                           fontSize: "0.68rem",
+                          fontWeight: 700,
                           cursor: "pointer",
                         }}
                       >
                         MARK READ
                       </button>
                     )}
+
                     <button
+                      type="button"
                       onClick={async () => {
                         const confirmed = await modal.confirm({
                           title: "Delete Message?",
@@ -808,57 +1032,71 @@ const AdminDashboard: React.FC = () => {
                           toast.info("Message deleted.");
                         }
                       }}
-                      className="msg-delete-btn"
+                      style={{
+                        background: "transparent",
+                        border: "1px solid rgba(239, 68, 68, 0.3)",
+                        color: "#ef4444",
+                        padding: "4px 10px",
+                        borderRadius: "4px",
+                        fontSize: "0.68rem",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
                     >
                       DELETE
                     </button>
                   </div>
                 </div>
-                <p className="msg-subject">{m.subject}</p>
-                <p className="msg-body">{m.message}</p>
+
+                <p style={{ fontWeight: 700, fontSize: "0.9rem", color: "#fff", margin: "10px 0 6px" }}>
+                  {m.subject}
+                </p>
+                <p style={{ color: "#bbb", fontSize: "0.82rem", lineHeight: 1.6, margin: 0 }}>
+                  {m.message}
+                </p>
               </div>
             ))
           )}
         </div>
       )}
 
-      {/* QUICK WALK-IN MODAL */}
+      {/* --- QUICK WALK-IN MODAL --- */}
       {showWalkinModal && (
         <div
           style={{
             position: "fixed",
             inset: 0,
             background: "rgba(0,0,0,0.85)",
-            backdropFilter: "blur(10px)",
+            backdropFilter: "blur(12px)",
             zIndex: 99999,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            padding: "20px",
+            padding: "16px",
           }}
         >
           <div
             style={{
               background: "#0c0c0c",
               border: "1px solid rgba(197, 160, 89, 0.35)",
-              borderRadius: "14px",
+              borderRadius: "16px",
               padding: "clamp(20px, 4vw, 32px)",
               maxWidth: "460px",
-              width: "94%",
+              width: "100%",
               maxHeight: "90vh",
               overflowY: "auto",
               boxShadow: "0 25px 60px rgba(0, 0, 0, 0.9)",
             }}
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.2rem" }}>
-              <h3 className="serif" style={{ fontSize: "1.4rem", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
-                <LuxuryIcon name="lightning" size={18} color="#c5a059" />
-                Fast <span className="gold-text">Walk-in Entry</span>
+              <h3 className="serif" style={{ fontSize: "1.3rem", margin: 0, display: "flex", alignItems: "center", gap: "8px" }}>
+                <LuxuryIcon name="lightning" size={16} color="#c5a059" />
+                Quick <span className="gold-text">Walk-in Entry</span>
               </h3>
               <button
                 type="button"
                 onClick={() => setShowWalkinModal(false)}
-                style={{ background: "none", border: "none", color: "#666", fontSize: "1.2rem", cursor: "pointer" }}
+                style={{ background: "none", border: "none", color: "#666", fontSize: "1.2rem", cursor: "pointer", padding: "4px" }}
               >
                 ✕
               </button>
@@ -883,6 +1121,7 @@ const AdminDashboard: React.FC = () => {
                       padding: "12px",
                       color: "#fff",
                       borderRadius: "6px",
+                      fontSize: "16px",
                       fontFamily: "inherit",
                     }}
                     autoFocus
@@ -895,7 +1134,7 @@ const AdminDashboard: React.FC = () => {
                   </label>
                   <input
                     type="tel"
-                    placeholder="Phone"
+                    placeholder="e.g. 08116079309"
                     value={walkinPhone}
                     onChange={(e) => setWalkinPhone(e.target.value)}
                     style={{
@@ -905,6 +1144,7 @@ const AdminDashboard: React.FC = () => {
                       padding: "12px",
                       color: "#fff",
                       borderRadius: "6px",
+                      fontSize: "16px",
                       fontFamily: "inherit",
                     }}
                   />
@@ -924,6 +1164,7 @@ const AdminDashboard: React.FC = () => {
                       padding: "12px",
                       color: "#fff",
                       borderRadius: "6px",
+                      fontSize: "16px",
                       fontFamily: "inherit",
                     }}
                   >
@@ -949,6 +1190,7 @@ const AdminDashboard: React.FC = () => {
                       padding: "12px",
                       color: "#fff",
                       borderRadius: "6px",
+                      fontSize: "16px",
                       fontFamily: "inherit",
                     }}
                   >
@@ -965,18 +1207,18 @@ const AdminDashboard: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setShowWalkinModal(false)}
-                    className="btn-outline"
-                    style={{ flex: 1, padding: "12px", fontSize: "0.75rem" }}
+                    className="btn-secondary-action"
+                    style={{ flex: 1, padding: "12px" }}
                   >
                     CANCEL
                   </button>
                   <button
                     type="submit"
                     disabled={walkinLoading}
-                    className="btn-gold"
-                    style={{ flex: 1, padding: "12px", fontSize: "0.75rem" }}
+                    className="appbar-btn-primary"
+                    style={{ flex: 1, padding: "12px", justifyContent: "center" }}
                   >
-                    {walkinLoading ? "QUEUING..." : "ADD TO QUEUE NOW"}
+                    {walkinLoading ? "QUEUING..." : "ADD TO QUEUE"}
                   </button>
                 </div>
               </div>
@@ -985,16 +1227,16 @@ const AdminDashboard: React.FC = () => {
         </div>
       )}
 
-      {/* STATS & COMMISSION SPLIT DRAWER */}
+      {/* --- STATS DRAWER (FOR QUICK DRILL-DOWN) --- */}
       <div className={`stats-drawer ${showStats ? "open" : ""}`}>
         <div className="drawer-header">
+          <h2 className="drawer-title">FINANCIAL INSIGHTS</h2>
           <button
             onClick={() => setShowStats(false)}
             className="drawer-close-btn"
           >
-            CLOSE ✕
+            ✕
           </button>
-          <h2 className="drawer-title">FINANCIAL INSIGHTS ({selectedDate})</h2>
         </div>
 
         <MiniStat label="DAILY SETTLED GROSS" value={stats.revenue} color="#22c55e" />
@@ -1024,37 +1266,32 @@ const AdminDashboard: React.FC = () => {
           />
         </div>
 
-        <hr className="divider" />
-
-        <h3 className="barber-split-title">ARTISAN EARNINGS BREAKDOWN</h3>
-        {Object.entries(stats.barberEarnings).map(([name, val]: [string, any]) => {
-          const artisanCut = Math.round(val * (commissionRate / 100));
-          return (
-            <div key={name} className="barber-row" style={{ flexDirection: "column", alignItems: "flex-start", gap: "2px", marginBottom: "12px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
-                <span className="barber-name" style={{ fontWeight: 600 }}>{name}</span>
-                <span className="barber-val">₦{val.toLocaleString()} gross</span>
-              </div>
-              <div style={{ fontSize: "0.72rem", color: "#38bdf8" }}>
-                Artisan Payout ({commissionRate}%): ₦{artisanCut.toLocaleString()}
-              </div>
-            </div>
-          );
-        })}
-
-        <hr className="divider" />
+        <hr style={{ border: "none", borderTop: "1px solid rgba(255,255,255,0.08)", margin: "20px 0" }} />
 
         <button
           onClick={handleExportPDF}
-          className="btn-action"
-          style={{ width: "100%", marginBottom: "10px", padding: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
+          className="appbar-btn-primary"
+          style={{ width: "100%", marginBottom: "10px", justifyContent: "center" }}
         >
-          <LuxuryIcon name="download" size={16} color="#c5a059" />
+          <LuxuryIcon name="download" size={14} color="#000" />
           EXPORT OFFICIAL PDF STATEMENT
         </button>
 
-        <button onClick={handleCleanup} className="btn-cleanup">
-          PRUNE OLD ARCHIVED RECORDS (&gt;30 DAYS)
+        <button
+          onClick={handleCleanup}
+          style={{
+            width: "100%",
+            background: "transparent",
+            color: "#ef4444",
+            border: "1px solid rgba(239,68,68,0.3)",
+            padding: "10px",
+            borderRadius: "8px",
+            fontSize: "0.72rem",
+            fontWeight: 700,
+            cursor: "pointer",
+          }}
+        >
+          PURGE ARCHIVED RECORDS (&gt;30 DAYS)
         </button>
       </div>
     </div>
@@ -1062,9 +1299,11 @@ const AdminDashboard: React.FC = () => {
 };
 
 const MiniStat = ({ label, value, color }: any) => (
-  <div className="mini-stat">
-    <div className="mini-stat-label">{label}</div>
-    <div className="mini-stat-value" style={{ color: color }}>
+  <div style={{ marginBottom: "16px" }}>
+    <div style={{ fontSize: "0.65rem", color: "#888", letterSpacing: "1px", marginBottom: "2px", textTransform: "uppercase" }}>
+      {label}
+    </div>
+    <div style={{ fontSize: "1.4rem", fontWeight: 800, color: color, fontFamily: "'Playfair Display', serif" }}>
       ₦{Number(value || 0).toLocaleString()}
     </div>
   </div>
