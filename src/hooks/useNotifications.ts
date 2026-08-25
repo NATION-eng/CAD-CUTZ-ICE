@@ -1,40 +1,68 @@
 import { useState, useEffect, useCallback } from "react";
 
 export function useNotifications() {
-  const [permission, setPermission] = useState<NotificationPermission>(
-    Notification.permission
-  );
+  const getInitialPermission = (): NotificationPermission => {
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      typeof Notification !== "undefined"
+    ) {
+      try {
+        return Notification.permission;
+      } catch {
+        return "default";
+      }
+    }
+    return "default";
+  };
+
+  const [permission, setPermission] = useState<NotificationPermission>(getInitialPermission);
 
   useEffect(() => {
-    setPermission(Notification.permission);
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      typeof Notification !== "undefined"
+    ) {
+      try {
+        setPermission(Notification.permission);
+      } catch {
+        setPermission("default");
+      }
+    }
   }, []);
 
-  const requestPermission = useCallback(async () => {
-    if (!("Notification" in window)) {
-      console.warn("This browser does not support desktop notification");
+  const requestPermission = useCallback(async (): Promise<NotificationPermission> => {
+    if (
+      typeof window === "undefined" ||
+      !("Notification" in window) ||
+      typeof Notification === "undefined"
+    ) {
       return "denied";
     }
-    console.log("Requesting Notification Permission...");
-    const result = await Notification.requestPermission();
-    console.log("Permission Result:", result);
-    setPermission(result);
-    return result;
+
+    try {
+      const result = await Notification.requestPermission();
+      setPermission(result);
+      return result;
+    } catch {
+      return "denied";
+    }
   }, []);
 
   const sendNotification = useCallback(
     (title: string, options?: NotificationOptions) => {
-      console.log("Attempting to send notification:", title, "Permission:", permission);
-      if (permission === "granted") {
+      if (
+        typeof window !== "undefined" &&
+        "Notification" in window &&
+        typeof Notification !== "undefined" &&
+        permission === "granted"
+      ) {
         try {
-          // Direct Notification for immediate feedback
-          const n = new Notification(title, options);
-          console.log("Notification dispatched successfully", n);
-        } catch (e) {
-          console.error("Notification Error:", e);
-          alert("Notification failed to send: " + e);
+          new Notification(title, options);
+        } catch {
+          // Ignore silently on unsupported mobile web environments
         }
-      } else {
-        console.warn("Notification permission not granted");
       }
     },
     [permission]

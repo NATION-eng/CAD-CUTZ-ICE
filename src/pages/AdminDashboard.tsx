@@ -104,7 +104,7 @@ const AdminDashboard: React.FC = () => {
   });
 
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toLocaleDateString("en-CA")
+    () => new Date().toISOString().split("T")[0]
   );
 
   // Quick Walk-in Modal State
@@ -657,8 +657,8 @@ const AdminDashboard: React.FC = () => {
             <div className="date-preset-group">
               <button
                 type="button"
-                onClick={() => setSelectedDate(new Date().toLocaleDateString("en-CA"))}
-                className={`date-preset-btn ${selectedDate === new Date().toLocaleDateString("en-CA") ? "active" : ""}`}
+                onClick={() => setSelectedDate(new Date().toISOString().split("T")[0])}
+                className={`date-preset-btn ${selectedDate === new Date().toISOString().split("T")[0] ? "active" : ""}`}
               >
                 Today
               </button>
@@ -667,7 +667,7 @@ const AdminDashboard: React.FC = () => {
                 onClick={() => {
                   const y = new Date();
                   y.setDate(y.getDate() - 1);
-                  setSelectedDate(y.toLocaleDateString("en-CA"));
+                  setSelectedDate(y.toISOString().split("T")[0]);
                 }}
                 className="date-preset-btn"
               >
