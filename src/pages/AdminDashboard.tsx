@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { securityEngine } from "../utils/security";
 import { db } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import {
@@ -88,9 +89,13 @@ const AdminDashboard: React.FC = () => {
   const modal = useModal();
 
   const [isAdmin, setIsAdmin] = useState(
-    () => localStorage.getItem("barber_admin") === "true"
+    () => securityEngine.isSessionValid()
   );
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginError, setLoginError] = useState("");
+  const [lockoutCountdown, setLockoutCountdown] = useState(0);
   const [showStats, setShowStats] = useState(false);
   const [activeTab, setActiveTab] = useState<"queue" | "audit" | "messages">("queue");
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -115,7 +120,6 @@ const AdminDashboard: React.FC = () => {
   const [walkinArtisan, setWalkinArtisan] = useState(ARTISANS[0].name);
   const [walkinLoading, setWalkinLoading] = useState(false);
 
-  const ADMIN_SECRET = "CAD123";
   const prevBookingsCount = useRef<number | null>(null);
   const prevMessagesCount = useRef<number | null>(null);
   const alertedBookings = useRef(new Set());
@@ -126,6 +130,89 @@ const AdminDashboard: React.FC = () => {
       requestPermission();
     }
   }, [isAdmin, permission, requestPermission]);
+
+  // Session expiry heartbeat — auto-logout when session token expires
+  useEffect(() => {
+    if (!isAdmin) return;
+    const heartbeat = setInterval(() => {
+      if (!securityEngine.isSessionValid()) {
+        setIsAdmin(false);
+        setPassword("");
+        toast.info("Session expired. Please re-authenticate.", "Session Expired");
+      }
+    }, 30_000); // Check every 30 seconds
+    return () => clearInterval(heartbeat);
+  }, [isAdmin, toast]);
+
+  // Lockout countdown timer
+  useEffect(() => {
+    if (lockoutCountdown <= 0) return;
+    const tick = setInterval(() => {
+      setLockoutCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(tick);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(tick);
+  }, [lockoutCountdown]);
+
+  // Secure login handler
+  const handleSecureLogin = useCallback(async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (loginLoading) return;
+
+    // Check lockout first
+    const lockout = securityEngine.getLockoutState();
+    if (lockout.lockedUntil && Date.now() < lockout.lockedUntil) {
+      const secs = Math.ceil((lockout.lockedUntil - Date.now()) / 1000);
+      setLockoutCountdown(secs);
+      setLoginError(`Too many failed attempts. Try again in ${secs}s.`);
+      return;
+    }
+
+    if (!password.trim()) {
+      setLoginError("Please enter your passcode.");
+      return;
+    }
+
+    setLoginLoading(true);
+    setLoginError("");
+
+    try {
+      const isValid = await securityEngine.verifyPasscode(password);
+
+      if (isValid) {
+        await securityEngine.createSession();
+        await requestPermission();
+        setIsAdmin(true);
+        setPassword("");
+        soundEffects.playSuccessChime();
+        toast.success("Welcome to Staff Operations Console", "Authenticated");
+      } else {
+        const result = securityEngine.recordFailedAttempt();
+        soundEffects.playSoftClick();
+
+        if (result.isLocked) {
+          setLockoutCountdown(result.secondsRemaining);
+          setLoginError(
+            `Account locked for ${result.secondsRemaining} seconds after too many failed attempts.`
+          );
+        } else {
+          const remaining = 5 - securityEngine.getLockoutState().failedAttempts;
+          setLoginError(
+            `Invalid passcode. ${remaining} attempt${remaining !== 1 ? "s" : ""} remaining before lockout.`
+          );
+        }
+      }
+    } catch {
+      setLoginError("Authentication error. Please try again.");
+    } finally {
+      setLoginLoading(false);
+    }
+  }, [password, loginLoading, requestPermission, toast]);
 
   // Session start scheduler
   useEffect(() => {
@@ -428,77 +515,171 @@ const AdminDashboard: React.FC = () => {
     [messages]
   );
 
-  // --- LOGIN SCREEN ---
+  // --- SECURE LOGIN SCREEN ---
   if (!isAdmin) {
+    const lockout = securityEngine.getLockoutState();
+    const isLockedOut = lockoutCountdown > 0 || (lockout.lockedUntil !== null && Date.now() < lockout.lockedUntil);
+
     return (
       <div className="login-container">
         <div className="login-card">
-          <span className="eyebrow">CAD CUTZ ATELIER</span>
-          <h2 className="login-title serif">Staff Operations</h2>
-          <p style={{ color: "#888", fontSize: "0.82rem", margin: "0 auto", lineHeight: 1.5 }}>
-            Authorized artisan access only. Enter your master security passcode to enter.
+          {/* Security Shield Icon */}
+          <div style={{
+            width: "56px",
+            height: "56px",
+            borderRadius: "16px",
+            background: "linear-gradient(135deg, rgba(197,160,89,0.15) 0%, rgba(197,160,89,0.05) 100%)",
+            border: "1px solid rgba(197,160,89,0.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            margin: "0 auto 18px",
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c5a059" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="M9 12l2 2 4-4"/>
+            </svg>
+          </div>
+
+          <span className="eyebrow">CAD CUTZ & ICE ATELIER</span>
+          <h2 className="login-title serif">Staff Console</h2>
+          <p style={{ color: "#888", fontSize: "0.82rem", margin: "0 auto 24px", lineHeight: 1.5, maxWidth: "320px" }}>
+            Authorized personnel only. Enter your master security passcode to access the staff operations console.
           </p>
 
-          <div
-            style={{
-              marginTop: "16px",
-              display: "inline-flex",
+          {/* Error / Lockout Alert */}
+          {loginError && (
+            <div style={{
+              background: isLockedOut ? "rgba(220, 38, 38, 0.12)" : "rgba(220, 38, 38, 0.08)",
+              border: `1px solid ${isLockedOut ? "rgba(220, 38, 38, 0.4)" : "rgba(220, 38, 38, 0.2)"}`,
+              borderRadius: "12px",
+              padding: "12px 16px",
+              marginBottom: "18px",
+              display: "flex",
               alignItems: "center",
-              gap: "8px",
-              background: "rgba(197, 160, 89, 0.12)",
-              border: "1px solid rgba(197, 160, 89, 0.3)",
-              padding: "6px 14px",
-              borderRadius: "20px",
-              fontSize: "0.75rem",
-              color: "#c5a059",
-            }}
-          >
-            <span>Passcode: <strong>CAD123</strong></span>
-            <button
-              type="button"
-              onClick={() => setPassword("CAD123")}
-              style={{
-                background: "var(--gold-gradient)",
-                color: "#000",
-                border: "none",
-                borderRadius: "10px",
-                padding: "3px 8px",
-                fontSize: "0.65rem",
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              Autofill
-            </button>
-          </div>
+              gap: "10px",
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isLockedOut ? "#ef4444" : "#f87171"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                {isLockedOut ? (
+                  <>
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </>
+                ) : (
+                  <>
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </>
+                )}
+              </svg>
+              <div style={{ flex: 1 }}>
+                <span style={{ color: isLockedOut ? "#ef4444" : "#f87171", fontSize: "0.78rem", fontWeight: 700 }}>
+                  {loginError}
+                </span>
+                {lockoutCountdown > 0 && (
+                  <div style={{
+                    marginTop: "6px",
+                    fontSize: "0.72rem",
+                    color: "#ef4444",
+                    fontWeight: 800,
+                    fontFamily: "monospace",
+                    letterSpacing: "1px",
+                  }}>
+                    ⏱ LOCKOUT: {lockoutCountdown}s remaining
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           <form
             className="login-form"
-            onSubmit={async (e) => {
-              e.preventDefault();
-              if (password === ADMIN_SECRET) {
-                await requestPermission();
-                setIsAdmin(true);
-                localStorage.setItem("barber_admin", "true");
-                soundEffects.playSuccessChime();
-                toast.success("Welcome to Staff Operations Console", "Authenticated");
-              } else {
-                toast.error("Invalid passcode. Use CAD123 to enter.", "Access Denied");
-              }
-            }}
+            onSubmit={handleSecureLogin}
           >
-            <input
-              type="password"
-              placeholder="Enter Passcode"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="login-input"
-              autoFocus
-            />
-            <button type="submit" className="login-btn">
-              AUTHENTICATE CONSOLE
+            <div style={{ position: "relative" }}>
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter Security Passcode"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (loginError) setLoginError("");
+                }}
+                className="login-input"
+                autoFocus
+                disabled={isLockedOut}
+                autoComplete="off"
+                style={{
+                  paddingRight: "48px",
+                  opacity: isLockedOut ? 0.5 : 1,
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "14px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+                tabIndex={-1}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  {showPassword ? (
+                    <>
+                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                      <line x1="1" y1="1" x2="23" y2="23"/>
+                    </>
+                  ) : (
+                    <>
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </>
+                  )}
+                </svg>
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="login-btn"
+              disabled={isLockedOut || loginLoading}
+              style={{ opacity: isLockedOut ? 0.5 : 1 }}
+            >
+              {loginLoading ? (
+                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                  <span className="login-spinner" />
+                  VERIFYING...
+                </span>
+              ) : isLockedOut ? (
+                `LOCKED (${lockoutCountdown}s)`
+              ) : (
+                "AUTHENTICATE CONSOLE"
+              )}
             </button>
           </form>
+
+          {/* Security Info Footer */}
+          <div style={{
+            marginTop: "24px",
+            display: "flex",
+            flexDirection: "column",
+            gap: "6px",
+            alignItems: "center",
+          }}>
+            <span style={{ fontSize: "0.68rem", color: "#555", letterSpacing: "0.5px" }}>
+              🔒 SHA-256 encrypted • 2-hour session • Auto-lockout after 5 attempts
+            </span>
+          </div>
         </div>
       </div>
     );
@@ -555,8 +736,9 @@ const AdminDashboard: React.FC = () => {
 
           <button
             onClick={() => {
+              securityEngine.terminateSession();
               setIsAdmin(false);
-              localStorage.removeItem("barber_admin");
+              setPassword("");
               toast.info("Logged out of staff session.");
             }}
             className="appbar-icon-btn destructive"

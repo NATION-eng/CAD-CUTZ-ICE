@@ -87,6 +87,26 @@
   box-shadow: 0 6px 20px rgba(197, 160, 89, 0.3);
 }
 
+.login-btn:disabled {
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: #000;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* --- MODERN TOP APP BAR --- */
 .admin-appbar {
   display: flex;
