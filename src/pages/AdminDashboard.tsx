@@ -95,6 +95,7 @@ const AdminDashboard: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState("");
+  const [isShaking, setIsShaking] = useState(false);
   const [lockoutCountdown, setLockoutCountdown] = useState(0);
   const [showStats, setShowStats] = useState(false);
   const [activeTab, setActiveTab] = useState<"queue" | "audit" | "messages">("queue");
@@ -194,11 +195,13 @@ const AdminDashboard: React.FC = () => {
       } else {
         const result = securityEngine.recordFailedAttempt();
         soundEffects.playSoftClick();
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
 
         if (result.isLocked) {
           setLockoutCountdown(result.secondsRemaining);
           setLoginError(
-            `Account locked for ${result.secondsRemaining} seconds after too many failed attempts.`
+            `Console locked for ${result.secondsRemaining}s due to consecutive failed attempts.`
           );
         } else {
           const remaining = 5 - securityEngine.getLockoutState().failedAttempts;
@@ -208,6 +211,8 @@ const AdminDashboard: React.FC = () => {
         }
       }
     } catch {
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       setLoginError("Authentication error. Please try again.");
     } finally {
       setLoginLoading(false);
@@ -515,51 +520,47 @@ const AdminDashboard: React.FC = () => {
     [messages]
   );
 
-  // --- SECURE LOGIN SCREEN ---
+  // --- SECURE MODERNIZED AUTHENTICATION CONSOLE ---
   if (!isAdmin) {
     const lockout = securityEngine.getLockoutState();
     const isLockedOut = lockoutCountdown > 0 || (lockout.lockedUntil !== null && Date.now() < lockout.lockedUntil);
 
     return (
       <div className="login-container">
-        <div className="login-card">
-          {/* Security Shield Icon */}
-          <div style={{
-            width: "56px",
-            height: "56px",
-            borderRadius: "16px",
-            background: "linear-gradient(135deg, rgba(197,160,89,0.15) 0%, rgba(197,160,89,0.05) 100%)",
-            border: "1px solid rgba(197,160,89,0.25)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 18px",
-          }}>
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c5a059" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        {/* Top Back Navigation */}
+        <div className="auth-topbar">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="auth-back-btn"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            <span>RETURN TO SALON</span>
+          </button>
+        </div>
+
+        {/* Centerpiece Luxury Glass Card */}
+        <div className={`login-card ${isShaking ? "shake" : ""}`}>
+          {/* Security Shield Badge */}
+          <div className="auth-shield-badge">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#c5a059" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <path d="M9 12l2 2 4-4"/>
             </svg>
           </div>
 
-          <span className="eyebrow">CAD CUTZ & ICE ATELIER</span>
-          <h2 className="login-title serif">Staff Console</h2>
-          <p style={{ color: "#888", fontSize: "0.82rem", margin: "0 auto 24px", lineHeight: 1.5, maxWidth: "320px" }}>
-            Authorized personnel only. Enter your master security passcode to access the staff operations console.
+          <span className="auth-eyebrow">CAD CUTZ & ICE ATELIER</span>
+          <h2 className="login-title serif">Staff Operations</h2>
+          <p className="auth-subtitle">
+            Secure management console. Enter your master artisan passcode to initialize operations.
           </p>
 
-          {/* Error / Lockout Alert */}
+          {/* Error / Lockout Alert Banner */}
           {loginError && (
-            <div style={{
-              background: isLockedOut ? "rgba(220, 38, 38, 0.12)" : "rgba(220, 38, 38, 0.08)",
-              border: `1px solid ${isLockedOut ? "rgba(220, 38, 38, 0.4)" : "rgba(220, 38, 38, 0.2)"}`,
-              borderRadius: "12px",
-              padding: "12px 16px",
-              marginBottom: "18px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isLockedOut ? "#ef4444" : "#f87171"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div className={`auth-alert-banner ${isLockedOut ? "locked" : "error"}`}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={isLockedOut ? "#ef4444" : "#f87171"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: "2px" }}>
                 {isLockedOut ? (
                   <>
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
@@ -574,33 +575,30 @@ const AdminDashboard: React.FC = () => {
                 )}
               </svg>
               <div style={{ flex: 1 }}>
-                <span style={{ color: isLockedOut ? "#ef4444" : "#f87171", fontSize: "0.78rem", fontWeight: 700 }}>
-                  {loginError}
-                </span>
+                <div className="auth-alert-text">{loginError}</div>
                 {lockoutCountdown > 0 && (
-                  <div style={{
-                    marginTop: "6px",
-                    fontSize: "0.72rem",
-                    color: "#ef4444",
-                    fontWeight: 800,
-                    fontFamily: "monospace",
-                    letterSpacing: "1px",
-                  }}>
-                    ⏱ LOCKOUT: {lockoutCountdown}s remaining
+                  <div className="auth-lockout-timer">
+                    <span>⏱ ACCESS LOCKED:</span>
+                    <span>{lockoutCountdown}s remaining</span>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          <form
-            className="login-form"
-            onSubmit={handleSecureLogin}
-          >
-            <div style={{ position: "relative" }}>
+          {/* Form */}
+          <form className="login-form" onSubmit={handleSecureLogin}>
+            <div className="auth-input-wrapper">
+              <div className="auth-input-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </div>
+
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter Security Passcode"
+                placeholder="Enter Staff Passcode"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
@@ -608,31 +606,20 @@ const AdminDashboard: React.FC = () => {
                 }}
                 className="login-input"
                 autoFocus
-                disabled={isLockedOut}
-                autoComplete="off"
-                style={{
-                  paddingRight: "48px",
-                  opacity: isLockedOut ? 0.5 : 1,
-                }}
+                disabled={isLockedOut || loginLoading}
+                autoComplete="current-password"
+                spellCheck="false"
               />
+
+              {/* Show / Hide Toggle Button */}
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "14px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: "4px",
-                  display: "flex",
-                  alignItems: "center",
-                }}
+                className="auth-toggle-btn"
+                title={showPassword ? "Hide Passcode" : "Show Passcode"}
                 tabIndex={-1}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#666" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                   {showPassword ? (
                     <>
                       <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
@@ -649,37 +636,63 @@ const AdminDashboard: React.FC = () => {
               </button>
             </div>
 
+            {/* Authenticate Submit Button */}
             <button
               type="submit"
               className="login-btn"
               disabled={isLockedOut || loginLoading}
-              style={{ opacity: isLockedOut ? 0.5 : 1 }}
             >
               {loginLoading ? (
-                <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                <>
                   <span className="login-spinner" />
-                  VERIFYING...
-                </span>
+                  <span>AUTHENTICATING...</span>
+                </>
               ) : isLockedOut ? (
-                `LOCKED (${lockoutCountdown}s)`
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                  <span>LOCKED ({lockoutCountdown}S)</span>
+                </>
               ) : (
-                "AUTHENTICATE CONSOLE"
+                <>
+                  <span>INITIALIZE OPERATIONS</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </>
               )}
             </button>
           </form>
 
-          {/* Security Info Footer */}
-          <div style={{
-            marginTop: "24px",
-            display: "flex",
-            flexDirection: "column",
-            gap: "6px",
-            alignItems: "center",
-          }}>
-            <span style={{ fontSize: "0.68rem", color: "#555", letterSpacing: "0.5px" }}>
-              🔒 SHA-256 encrypted • 2-hour session • Auto-lockout after 5 attempts
-            </span>
+          {/* Security Trust Badges */}
+          <div className="auth-trust-strip">
+            <div className="auth-trust-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>SHA-256 ENCRYPTED</span>
+            </div>
+            <div className="auth-trust-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+              <span>2H TIMEOUT</span>
+            </div>
+            <div className="auth-trust-item">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              <span>BRUTE-FORCE GUARD</span>
+            </div>
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="auth-footer">
+          <span>© {new Date().getFullYear()} CAD CUTZ & ICE • ATELIER DISPATCH SYSTEM</span>
         </div>
       </div>
     );
