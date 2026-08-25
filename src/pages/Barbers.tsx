@@ -28,14 +28,33 @@ const Barbers: React.FC = () => {
   return (
     <div className="page-wrapper">
       <div className="container">
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <span className="eyebrow">THE CRAFTSMEN</span>
-          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
+        {/* Modern Header */}
+        <div style={{ textAlign: "center", marginBottom: "2.8rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "rgba(197, 160, 89, 0.1)",
+              border: "1px solid rgba(197, 160, 89, 0.3)",
+              padding: "6px 16px",
+              borderRadius: "20px",
+              fontSize: "0.72rem",
+              color: "#c5a059",
+              fontWeight: 800,
+              letterSpacing: "1.5px",
+              marginBottom: "1rem",
+            }}
+          >
+            <LuxuryIcon name="crown" size={13} color="#c5a059" />
+            <span>THE MASTER CRAFTSMEN</span>
+          </div>
+
+          <h1 className="serif" style={{ margin: "0 0 1rem", fontSize: "clamp(2.4rem, 6vw, 4rem)" }}>
             The Master <span className="gold-text italic">Artisans</span>
           </h1>
-          <p style={{ color: "var(--gray)", maxWidth: "620px", margin: "0 auto" }}>
-            The visionary hands behind every contour. Master barbers who transform grooming into high art.
+          <p style={{ color: "#888", maxWidth: "620px", margin: "0 auto", fontSize: "0.92rem", lineHeight: 1.6 }}>
+            The visionary hands behind every signature silhouette. Experienced master barbers who transform classic men's grooming into high art.
           </p>
         </div>
 
@@ -47,16 +66,20 @@ const Barbers: React.FC = () => {
             return (
               <div
                 key={barber.id}
-                className="card-luxury"
+                className="artisan-card-luxury"
                 style={{
                   padding: 0,
                   background: "#0c0c0c",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
+                  borderRadius: "16px",
+                  overflow: "hidden",
                   display: "flex",
                   flexDirection: "column",
+                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
               >
                 {/* Image Section */}
-                <div style={{ position: "relative", height: "420px", overflow: "hidden" }}>
+                <div style={{ position: "relative", height: "400px", overflow: "hidden", background: "#111" }}>
                   <img
                     src={barber.avatar}
                     alt={barber.name}
@@ -74,8 +97,8 @@ const Barbers: React.FC = () => {
                   <div
                     style={{
                       position: "absolute",
-                      top: "16px",
-                      left: "16px",
+                      top: "14px",
+                      left: "14px",
                       background: "rgba(5, 5, 5, 0.85)",
                       backdropFilter: "blur(8px)",
                       padding: "6px 12px",
@@ -83,20 +106,21 @@ const Barbers: React.FC = () => {
                       display: "flex",
                       alignItems: "center",
                       gap: "6px",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      border: isOccupied ? "1px solid rgba(239, 68, 68, 0.3)" : "1px solid rgba(34, 197, 94, 0.3)",
                     }}
                   >
                     <span
                       style={{
-                        width: "8px",
-                        height: "8px",
+                        width: "7px",
+                        height: "7px",
                         borderRadius: "50%",
                         background: isOccupied ? "#ef4444" : "#22c55e",
                         display: "inline-block",
+                        boxShadow: isOccupied ? "0 0 8px #ef4444" : "0 0 8px #22c55e",
                       }}
                     />
-                    <span style={{ fontSize: "0.7rem", fontWeight: 700, color: isOccupied ? "#ef4444" : "#22c55e", letterSpacing: "1px" }}>
-                      {isOccupied ? "IN-CHAIR NOW" : "READY / AVAILABLE"}
+                    <span style={{ fontSize: "0.68rem", fontWeight: 800, color: isOccupied ? "#ef4444" : "#22c55e", letterSpacing: "1px" }}>
+                      {isOccupied ? "IN-CHAIR NOW" : "AVAILABLE"}
                     </span>
                   </div>
 
@@ -104,16 +128,16 @@ const Barbers: React.FC = () => {
                   <div
                     style={{
                       position: "absolute",
-                      top: "16px",
-                      right: "16px",
+                      top: "14px",
+                      right: "14px",
                       background: "rgba(5, 5, 5, 0.85)",
                       backdropFilter: "blur(8px)",
                       padding: "6px 12px",
                       borderRadius: "20px",
                       fontSize: "0.75rem",
-                      fontWeight: 700,
+                      fontWeight: 800,
                       color: "#c5a059",
-                      border: "1px solid rgba(197, 160, 89, 0.3)",
+                      border: "1px solid rgba(197, 160, 89, 0.35)",
                       display: "flex",
                       alignItems: "center",
                       gap: "4px",
@@ -125,22 +149,22 @@ const Barbers: React.FC = () => {
                 </div>
 
                 {/* Details Section */}
-                <div style={{ padding: "24px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                <div style={{ padding: "22px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                   <div>
-                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "2.5px", fontWeight: 700, textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
+                    <span style={{ color: "#c5a059", fontSize: "0.7rem", letterSpacing: "2px", fontWeight: 700, textTransform: "uppercase", display: "block", marginBottom: "4px" }}>
                       {barber.role} • {barber.experience}
                     </span>
 
-                    <h3 className="serif" style={{ fontSize: "1.8rem", margin: "0 0 8px", color: "#fff" }}>
+                    <h3 className="serif" style={{ fontSize: "1.6rem", margin: "0 0 8px", color: "#fff" }}>
                       {barber.name}
                     </h3>
 
-                    <p style={{ color: "#888", fontSize: "0.85rem", lineHeight: 1.5, marginBottom: "16px" }}>
+                    <p style={{ color: "#888", fontSize: "0.85rem", lineHeight: 1.5, marginBottom: "14px" }}>
                       {barber.specialty}
                     </p>
 
-                    <div style={{ fontSize: "0.75rem", color: "#666", marginBottom: "20px" }}>
-                      <span style={{ color: "#aaa" }}>Active Schedule:</span> {barber.workingDays.join(", ")}
+                    <div style={{ fontSize: "0.72rem", color: "#666", marginBottom: "18px" }}>
+                      <span style={{ color: "#aaa" }}>Working Days:</span> {barber.workingDays.join(", ")}
                     </div>
                   </div>
 
@@ -148,10 +172,10 @@ const Barbers: React.FC = () => {
                     type="button"
                     onClick={() => handleBookWithArtisan(barber.name)}
                     className="btn-gold"
-                    style={{ width: "100%", padding: "14px", gap: "8px" }}
+                    style={{ width: "100%", padding: "12px", gap: "8px", justifyContent: "center" }}
                   >
                     <LuxuryIcon name="sparkle" size={14} color="#000" />
-                    BOOK SESSION WITH {barber.name.toUpperCase()}
+                    RESERVE WITH {barber.name.toUpperCase()}
                   </button>
                 </div>
               </div>
@@ -161,9 +185,14 @@ const Barbers: React.FC = () => {
       </div>
 
       <style>{`
-        .card-luxury:hover .artisan-img {
+        .artisan-card-luxury:hover {
+          border-color: rgba(197, 160, 89, 0.45) !important;
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(197, 160, 89, 0.12);
+        }
+        .artisan-card-luxury:hover .artisan-img {
           filter: grayscale(0%) !important;
-          transform: scale(1.05);
+          transform: scale(1.06);
         }
       `}</style>
     </div>

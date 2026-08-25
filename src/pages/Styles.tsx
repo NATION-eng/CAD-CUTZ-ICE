@@ -98,114 +98,123 @@ export const stylesList: StyleItem[] = [
     id: 11,
     name: "Textured French Crop",
     category: "Texture & Waves",
-    description: "Forward French fringe with point-cut matte textured crown and mid fade.",
-    img: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=800&q=80",
+    description: "Forward layered fringe with blunted edge and high skin fade.",
+    img: "https://images.unsplash.com/photo-1517832606299-7ae9b720a186?auto=format&fit=crop&w=800&q=80",
     tag: "MODERN",
   },
   {
     id: 12,
-    name: "Artisanal Scissor Hand-Cut",
-    category: "Classic Cuts",
-    description: "Pure shear precision haircut without clippers for natural organic flow.",
-    img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=800&q=80",
-    tag: "HANDCRAFTED",
-  },
-  {
-    id: 13,
-    name: "Executive Caesar Cut",
-    category: "Classic Cuts",
-    description: "Short horizontal fringe with neat even perimeter and polished finish.",
-    img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
-    tag: "REFINED",
-  },
-  {
-    id: 14,
-    name: "Modern Mullet & Temple Taper",
+    name: "Burst Fade Fohawk",
     category: "Fades & Tapers",
-    description: "Contemporary textured flow at the nape with clean temple transitions.",
-    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    description: "Circular ear fade contour with textured center crest and crisp temple line.",
+    img: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=800&q=80",
     tag: "TRENDING",
   },
   {
-    id: 15,
-    name: "Afro Hair Re-Locking & Shine",
+    id: 13,
+    name: "Afro Temple Taper",
+    category: "Texture & Waves",
+    description: "Full natural volumetric crown with clean temple and nape drop fade.",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    tag: "ICONIC",
+  },
+  {
+    id: 14,
+    name: "Architectural Dreadlock Barrel Rows",
     category: "Locs & Braids",
-    description: "Full head dread retwist, root maintenance, and organic coconut oil set.",
-    img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
-    tag: "DREADLOCKS",
+    description: "Intricately woven locs secured in sleek symmetrical geometric cornrows.",
+    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    tag: "MASTER LOCS",
+  },
+  {
+    id: 15,
+    name: "Boxer Braids with Clean Parting",
+    category: "Locs & Braids",
+    description: "Flawless parallel twin braids feeding back to nape with razor-clean scalp grid.",
+    img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    tag: "BRAIDS",
   },
   {
     id: 16,
-    name: "Long Beard & Mustache Styling",
-    category: "Beard & Contour",
-    description: "Full organic growth groomed and styled with beeswax balm and hot comb.",
-    img: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&w=800&q=80",
-    tag: "RUGGED",
+    name: "Loc Retwist with Freestyle Geometry",
+    category: "Locs & Braids",
+    description: "Fresh palm-roll maintenance finished with custom razor art etched into the neckline.",
+    img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+    tag: "SIGNATURE",
   },
   {
     id: 17,
-    name: "Burst Fade Mohawk",
-    category: "Fades & Tapers",
-    description: "Curved dynamic fade around the ear with a bold central textured ridge.",
-    img: "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=800&q=80",
-    tag: "DYNAMIC",
+    name: "High Loc Crown with Drop Fade",
+    category: "Locs & Braids",
+    description: "Voluminous locs tied high into an executive top knot surrounded by a smooth taper.",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    tag: "POPULAR",
   },
   {
     id: 18,
-    name: "High Fade Re-Locking",
+    name: "Short Textured Locs with Mid Fade",
     category: "Locs & Braids",
-    description: "High-top dreadlocks retwist accompanied by razor skin taper fade.",
-    img: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=800&q=80",
-    tag: "LOCS",
+    description: "Clean starter or shoulder locs with mid-level skin graduation and edge enhancement.",
+    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    tag: "VERSATILE",
   },
   {
     id: 19,
-    name: "Short Afro Temple Taper",
-    category: "Texture & Waves",
-    description: "Natural organic curls with soft temple taper and defined forehead line.",
-    img: "https://images.unsplash.com/photo-1567894340315-735d7c361db0?auto=format&fit=crop&w=800&q=80",
-    tag: "NATURAL",
+    name: "Two-Strand Twist with Temple Fade",
+    category: "Locs & Braids",
+    description: "Defined two-strand rope twists with sharp frontal alignment and temple taper.",
+    img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80",
+    tag: "TWISTS",
   },
   {
     id: 20,
-    name: "Textured Crop Fringe",
-    category: "Texture & Waves",
-    description: "Choppy matte texturing on top with tight drop fade around ears.",
-    img: "https://images.unsplash.com/photo-1618331835717-801e976710b2?auto=format&fit=crop&w=800&q=80",
-    tag: "URBAN",
+    name: "Spider Web Braid Crown",
+    category: "Locs & Braids",
+    description: "Complex artisanal mandala pattern centered from crown with razor perimeter.",
+    img: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+    tag: "EXCLUSIVE",
   },
   {
     id: 21,
-    name: "Braided Crown & Nape Taper",
+    name: "Low Loc Ponytail with Razor Lineup",
     category: "Locs & Braids",
-    description: "Geometric cornrow braiding finished with razor sharp perimeter lines.",
-    img: "https://images.unsplash.com/photo-1475403131035-a73a50394f47?auto=format&fit=crop&w=800&q=80",
-    tag: "ARTISANAL",
+    description: "Sleek low-tied loc arrangement with surgical razor edge enhancement.",
+    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    tag: "EXECUTIVE",
   },
   {
     id: 22,
-    name: "Voluminous Textured Quiff",
-    category: "Classic Cuts",
-    description: "Maximum front height and flow with tapered side contours.",
-    img: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=800&q=80",
-    tag: "PRESTIGE",
+    name: "Micro-Locs with Bald Fade",
+    category: "Locs & Braids",
+    description: "Densely packed fine micro-locs with high-contrast razor bald fade on perimeter.",
+    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
+    tag: "LUXURY",
   },
 ];
 
-const CATEGORIES = ["All", "Fades & Tapers", "Beard & Contour", "Texture & Waves", "Locs & Braids", "Classic Cuts"];
+const CATEGORIES = [
+  "All",
+  "Fades & Tapers",
+  "Beard & Contour",
+  "Locs & Braids",
+  "Texture & Waves",
+  "Classic Cuts",
+] as const;
 
 const Styles: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredStyles = useMemo(() => {
-    return stylesList.filter((style) => {
-      const matchCat = selectedCategory === "All" || style.category === selectedCategory;
+    return stylesList.filter((item) => {
+      const matchCategory =
+        selectedCategory === "All" || item.category === selectedCategory;
       const matchSearch =
-        style.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        style.description.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchCat && matchSearch;
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.tag.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCategory && matchSearch;
     });
   }, [selectedCategory, searchQuery]);
 
@@ -218,14 +227,33 @@ const Styles: React.FC = () => {
   return (
     <div className="page-wrapper">
       <div className="container">
-        {/* Header */}
-        <div style={{ textAlign: "center", marginBottom: "3rem" }}>
-          <span className="eyebrow">THE ATELIER LOOKBOOK</span>
-          <h1 className="serif" style={{ margin: "0 0 1rem" }}>
-            Curated <span className="gold-text italic">Signature Cuts</span>
+        {/* Modern Header */}
+        <div style={{ textAlign: "center", marginBottom: "2.8rem" }}>
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              background: "rgba(197, 160, 89, 0.1)",
+              border: "1px solid rgba(197, 160, 89, 0.3)",
+              padding: "6px 16px",
+              borderRadius: "20px",
+              fontSize: "0.72rem",
+              color: "#c5a059",
+              fontWeight: 800,
+              letterSpacing: "1.5px",
+              marginBottom: "1rem",
+            }}
+          >
+            <LuxuryIcon name="scissors" size={13} color="#c5a059" />
+            <span>22 SIGNATURE ARTISANAL CUTS</span>
+          </div>
+
+          <h1 className="serif" style={{ margin: "0 0 1rem", fontSize: "clamp(2.4rem, 6vw, 4rem)" }}>
+            The Atelier <span className="gold-text italic">Lookbook</span>
           </h1>
-          <p style={{ color: "#888", maxWidth: "600px", margin: "0 auto" }}>
-            Explore our master portfolio of 22 bespoke cuts. Click any style to automatically pre-fill your booking session.
+          <p style={{ color: "#888", maxWidth: "620px", margin: "0 auto", fontSize: "0.92rem", lineHeight: 1.6 }}>
+            Browse our signature portfolio of precision cuts, loc artistry, and beard contours. Tap any style to automatically pre-select it in your VIP booking wizard.
           </p>
         </div>
 
@@ -238,9 +266,10 @@ const Styles: React.FC = () => {
             flexWrap: "wrap",
             gap: "1rem",
             marginBottom: "2.5rem",
-            background: "#0c0c0c",
-            padding: "14px 16px",
-            borderRadius: "10px",
+            background: "rgba(14, 14, 14, 0.8)",
+            backdropFilter: "blur(14px)",
+            padding: "12px 18px",
+            borderRadius: "14px",
             border: "1px solid rgba(197, 160, 89, 0.2)",
           }}
         >
@@ -255,17 +284,18 @@ const Styles: React.FC = () => {
                   setSelectedCategory(cat);
                 }}
                 style={{
-                  background: selectedCategory === cat ? "var(--gold-gradient)" : "transparent",
+                  background: selectedCategory === cat ? "var(--gold-gradient)" : "rgba(255, 255, 255, 0.04)",
                   color: selectedCategory === cat ? "#000" : "#aaa",
-                  border: selectedCategory === cat ? "none" : "1px solid #222",
-                  padding: "6px 14px",
+                  border: selectedCategory === cat ? "none" : "1px solid rgba(255, 255, 255, 0.08)",
+                  padding: "7px 16px",
                   borderRadius: "20px",
-                  fontSize: "0.7rem",
+                  fontSize: "0.72rem",
                   fontWeight: 700,
-                  letterSpacing: "1px",
+                  letterSpacing: "0.8px",
                   cursor: "pointer",
                   whiteSpace: "nowrap",
                   transition: "all 0.2s ease",
+                  fontFamily: "inherit",
                 }}
               >
                 {cat}
@@ -284,11 +314,12 @@ const Styles: React.FC = () => {
                 width: "100%",
                 background: "#050505",
                 border: "1px solid rgba(197, 160, 89, 0.3)",
-                padding: "8px 14px",
+                padding: "9px 16px",
                 color: "#fff",
                 borderRadius: "20px",
                 fontSize: "0.82rem",
                 fontFamily: "inherit",
+                outline: "none",
               }}
             />
           </div>
@@ -296,8 +327,8 @@ const Styles: React.FC = () => {
 
         {/* Lookbook Grid */}
         {filteredStyles.length === 0 ? (
-          <div style={{ padding: "60px 20px", textAlign: "center", border: "1px dashed #333", borderRadius: "10px", color: "#888" }}>
-            No styles match your search criteria. Try a different query.
+          <div style={{ padding: "60px 20px", textAlign: "center", border: "1px dashed #333", borderRadius: "12px", color: "#888", background: "#0c0c0c" }}>
+            No styles match "{searchQuery}". Try browsing all categories.
           </div>
         ) : (
           <div className="responsive-card-grid">
@@ -310,10 +341,12 @@ const Styles: React.FC = () => {
                   padding: 0,
                   cursor: "pointer",
                   background: "#0c0c0c",
+                  border: "1px solid rgba(255, 255, 255, 0.08)",
                   display: "flex",
                   flexDirection: "column",
-                  borderRadius: "12px",
+                  borderRadius: "14px",
                   overflow: "hidden",
+                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
                 }}
               >
                 {/* Image Frame */}
@@ -335,17 +368,17 @@ const Styles: React.FC = () => {
                   <span
                     style={{
                       position: "absolute",
-                      top: "16px",
-                      left: "16px",
+                      top: "14px",
+                      left: "14px",
                       background: "rgba(5, 5, 5, 0.85)",
                       backdropFilter: "blur(8px)",
                       color: "#c5a059",
-                      border: "1px solid rgba(197, 160, 89, 0.3)",
+                      border: "1px solid rgba(197, 160, 89, 0.35)",
                       padding: "4px 10px",
-                      borderRadius: "4px",
+                      borderRadius: "6px",
                       fontSize: "0.65rem",
                       fontWeight: 800,
-                      letterSpacing: "2px",
+                      letterSpacing: "1.5px",
                     }}
                   >
                     {style.tag}
@@ -367,22 +400,31 @@ const Styles: React.FC = () => {
                   >
                     <span className="btn-gold" style={{ padding: "12px 24px", fontSize: "0.75rem", gap: "6px" }}>
                       <LuxuryIcon name="sparkle" size={14} color="#000" />
-                      SELECT FOR BOOKING
+                      RESERVE THIS STYLE
                     </span>
                   </div>
                 </div>
 
                 {/* Details */}
-                <div style={{ padding: "20px" }}>
-                  <span style={{ fontSize: "0.68rem", color: "#c5a059", letterSpacing: "2px", textTransform: "uppercase", fontWeight: 700 }}>
-                    {style.category}
-                  </span>
-                  <h3 style={{ fontSize: "1.2rem", color: "#fff", margin: "6px 0 8px", fontFamily: "'Playfair Display', serif" }}>
-                    {style.name}
-                  </h3>
-                  <p style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.5, margin: 0 }}>
-                    {style.description}
-                  </p>
+                <div style={{ padding: "20px", display: "flex", flexDirection: "column", justifyContent: "space-between", flex: 1 }}>
+                  <div>
+                    <span style={{ fontSize: "0.68rem", color: "#c5a059", letterSpacing: "1.5px", textTransform: "uppercase", fontWeight: 700 }}>
+                      {style.category}
+                    </span>
+                    <h3 style={{ fontSize: "1.15rem", color: "#fff", margin: "4px 0 6px", fontFamily: "'Playfair Display', serif", fontWeight: 700 }}>
+                      {style.name}
+                    </h3>
+                    <p style={{ fontSize: "0.8rem", color: "#888", lineHeight: 1.5, margin: 0 }}>
+                      {style.description}
+                    </p>
+                  </div>
+
+                  <div style={{ marginTop: "14px", paddingTop: "12px", borderTop: "1px solid rgba(255, 255, 255, 0.05)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <span style={{ fontSize: "0.72rem", color: "#c5a059", fontWeight: 700, letterSpacing: "0.5px" }}>
+                      1-Tap VIP Selection →
+                    </span>
+                    <LuxuryIcon name="sparkle" size={12} color="#c5a059" />
+                  </div>
                 </div>
               </div>
             ))}
@@ -391,6 +433,11 @@ const Styles: React.FC = () => {
       </div>
 
       <style>{`
+        .card-luxury:hover {
+          border-color: rgba(197, 160, 89, 0.5) !important;
+          transform: translateY(-4px);
+          box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 20px rgba(197,160,89,0.15);
+        }
         .card-luxury:hover .style-cover-img {
           filter: grayscale(0%) !important;
           transform: scale(1.06);

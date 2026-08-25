@@ -49,14 +49,14 @@ const Contact: React.FC = () => {
   };
 
   const inputStyle: React.CSSProperties = {
-    background: "#050505",
+    background: "#080808",
     border: "1px solid rgba(197, 160, 89, 0.25)",
     color: "#fff",
     padding: "12px 14px",
-    fontSize: "0.9rem",
+    fontSize: "16px",
     fontFamily: "inherit",
     width: "100%",
-    borderRadius: "6px",
+    borderRadius: "8px",
     outline: "none",
   };
 
@@ -66,22 +66,42 @@ const Contact: React.FC = () => {
         <div className="contact-grid">
           {/* Left Column: Location & Contact Cards */}
           <div>
-            <span className="eyebrow">CONCIERGE & ATELIER LOCATION</span>
-            <h1 className="serif" style={{ margin: "0 0 1.2rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "rgba(197, 160, 89, 0.1)",
+                border: "1px solid rgba(197, 160, 89, 0.3)",
+                padding: "6px 16px",
+                borderRadius: "20px",
+                fontSize: "0.72rem",
+                color: "#c5a059",
+                fontWeight: 800,
+                letterSpacing: "1.5px",
+                marginBottom: "1rem",
+              }}
+            >
+              <LuxuryIcon name="location" size={13} color="#c5a059" />
+              <span>CONCIERGE & ATELIER LOCATION</span>
+            </div>
+
+            <h1 className="serif" style={{ margin: "0 0 1.2rem", fontSize: "clamp(2.2rem, 5vw, 3.8rem)" }}>
               Reach <span className="gold-text italic">Our Atelier</span>
             </h1>
-            <p style={{ color: "#888", marginBottom: "2rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#888", marginBottom: "2rem", lineHeight: 1.6, fontSize: "0.92rem" }}>
               Whether you wish to arrange a private after-hours VIP session, bridal groom package, or inquire about dreadlock styling, our concierge is at your service.
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
               {/* Location Card */}
               <div
                 style={{
                   background: "#0c0c0c",
                   border: "1px solid rgba(197, 160, 89, 0.2)",
-                  borderRadius: "10px",
-                  padding: "20px",
+                  borderRadius: "14px",
+                  padding: "22px",
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
@@ -90,7 +110,7 @@ const Contact: React.FC = () => {
                     ATELIER ADDRESS
                   </span>
                 </div>
-                <p style={{ color: "#ddd", fontSize: "0.88rem", lineHeight: 1.5, margin: "0 0 12px" }}>
+                <p style={{ color: "#ddd", fontSize: "0.88rem", lineHeight: 1.5, margin: "0 0 14px" }}>
                   CAD CUTZ Egbelu-ogbogoro road Opp. SDA Church Egbelu-Mgbaraja, Ogbogoro Town, Obio/Akpor LGA, Port Harcourt, Rivers State.
                 </p>
                 <a
@@ -110,11 +130,12 @@ const Contact: React.FC = () => {
                 style={{
                   background: "#0c0c0c",
                   border: "1px solid rgba(197, 160, 89, 0.2)",
-                  borderRadius: "10px",
-                  padding: "20px",
+                  borderRadius: "14px",
+                  padding: "22px",
                   display: "grid",
                   gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
                   gap: "1.2rem",
+                  boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
                 }}
               >
                 <div>
@@ -128,12 +149,19 @@ const Contact: React.FC = () => {
                 </div>
                 <div>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <LuxuryIcon name="phone" size={14} color="#c5a059" />
-                    <span style={{ color: "#c5a059", fontSize: "0.72rem", letterSpacing: "1.5px", fontWeight: 700 }}>
-                      PHONE / WHATSAPP
+                    <LuxuryIcon name="whatsapp" size={14} color="#22c55e" />
+                    <span style={{ color: "#22c55e", fontSize: "0.72rem", letterSpacing: "1.5px", fontWeight: 700 }}>
+                      WHATSAPP CONCIERGE
                     </span>
                   </div>
-                  <p style={{ color: "#ddd", fontSize: "0.85rem", margin: 0 }}>08116079309</p>
+                  <a
+                    href="https://wa.me/2348116079309"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#22c55e", fontSize: "0.88rem", margin: 0, fontWeight: 700, textDecoration: "none", display: "inline-block" }}
+                  >
+                    08116079309
+                  </a>
                 </div>
               </div>
             </div>
@@ -145,9 +173,9 @@ const Contact: React.FC = () => {
             style={{
               background: "#0c0c0c",
               padding: "clamp(20px, 4vw, 36px)",
-              borderRadius: "14px",
+              borderRadius: "16px",
               border: "1px solid rgba(197, 160, 89, 0.3)",
-              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7)",
+              boxShadow: "0 25px 60px rgba(0, 0, 0, 0.7)",
             }}
           >
             <h3 className="serif" style={{ fontSize: "clamp(1.3rem, 3vw, 1.6rem)", marginBottom: "0.4rem" }}>
@@ -164,7 +192,7 @@ const Contact: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Alexander Vance"
+                  placeholder="e.g. Alexander Vance"
                   style={inputStyle}
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -232,7 +260,7 @@ const Contact: React.FC = () => {
               <button
                 type="submit"
                 className="btn-gold"
-                style={{ width: "100%", padding: "12px", marginTop: "6px", gap: "8px" }}
+                style={{ width: "100%", padding: "12px", marginTop: "6px", gap: "8px", justifyContent: "center" }}
                 disabled={loading}
               >
                 <LuxuryIcon name="sparkle" size={16} color="#000" />
