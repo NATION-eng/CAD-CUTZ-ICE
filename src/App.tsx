@@ -2,6 +2,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import { ToastProvider } from "./context/ToastContext";
 import { ModalProvider } from "./context/ModalContext";
 
@@ -51,6 +52,9 @@ export default function App() {
           {/* Hide Footer on Admin page */}
           {!isAdminPage && <Footer />}
         </div>
+
+        {/* PWA Install prompt — shown on first touch/click, hidden on admin */}
+        {!isAdminPage && <PWAInstallPrompt />}
       </ModalProvider>
     </ToastProvider>
   );
